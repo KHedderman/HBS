@@ -1,4 +1,4 @@
-<title>The Docket</title>
+<title>KH HBS Agentic Workforce</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
@@ -222,13 +222,13 @@
 <div class="masthead">
   <div class="masthead-inner">
     <div>
-      <div class="eyebrow wordmark-eyebrow">HBS AI Institute · Content Command Center</div>
-      <h1 class="wordmark">The Docket <em>— filed &amp; in review</em></h1>
+      <div class="eyebrow wordmark-eyebrow">HBS AI Institute · directed by Kaitlyn Hedderman</div>
+      <h1 class="wordmark">KH HBS <em>Agentic Workforce</em></h1>
       <div class="mode-pill mono"><span class="dot"></span> INTERACTIVE MODE — HUMAN IN THE LOOP</div>
     </div>
     <div class="masthead-meta">
       <div class="ticker mono" id="caseCount">—</div>
-      <div class="eyebrow ticker-label">Matters on file</div>
+      <div class="eyebrow ticker-label">Requests handled</div>
     </div>
   </div>
 </div>
@@ -246,9 +246,9 @@
         <div id="spokes"></div>
       </div>
     </div>
-    <div class="orbit-hint">Drag to rotate the architecture · select a case below to see its Directors light up</div>
+    <div class="orbit-hint">Drag to rotate the architecture · select a request below to see its Directors light up</div>
     <div class="legend">
-      <div><span class="swatch" style="background:var(--crimson)"></span><b>Active spoke</b> — dispatched on the selected case</div>
+      <div><span class="swatch" style="background:var(--crimson)"></span><b>Active spoke</b> — dispatched on the selected request</div>
       <div><span class="swatch" style="background:var(--navy)"></span><b>Connector-live</b> — can execute directly via Lovable, ElevenLabs or Granola in a chat session</div>
       <div><b>Winsor</b> (Memory Curator) works alongside Eliot, off to the side — persisting every case to GitHub &amp; Notion, not shown as a spoke</div>
       <div><b>Rule:</b> spokes never talk to each other — every output returns only to Eliot</div>
@@ -259,12 +259,12 @@
 <div class="workspace">
   <div class="col">
     <div class="card">
-      <div class="card-head"><h2>File a New Matter</h2></div>
+      <div class="card-head"><h2>Assign the Team a Request</h2></div>
       <div class="card-body">
         <textarea id="matterInput" placeholder="e.g. Draft a LinkedIn post recapping the Institute's new agentic-workflows short course, and check what competitors have shipped this month."></textarea>
         <div class="file-row">
           <div class="status-line mono" id="statusLine" aria-live="polite"></div>
-          <button class="btn btn-primary" id="fileBtn">File Matter</button>
+          <button class="btn btn-primary" id="fileBtn">Send to Eliot</button>
         </div>
       </div>
     </div>
@@ -285,7 +285,7 @@
 
   <div class="col">
     <div class="card-head" style="border:none; padding:0 0 .75rem;">
-      <h2>Case Log</h2>
+      <h2>Work Log</h2>
       <span class="eyebrow" id="caseLogCount" style="color:var(--ink-soft)"></span>
     </div>
     <div id="caseLog"></div>
@@ -293,7 +293,7 @@
 </div>
 
 <footer>
-  <span>HBS AI Institute · Content Command Center — a working record, not a public record</span>
+  <span>KH HBS Agentic Workforce — a working record, not a public record</span>
   <span class="mono">v1 · hub-and-spoke</span>
 </footer>
 
@@ -460,12 +460,12 @@
 
       await casesCol.add(record);
       input.value = "";
-      setStatus("Filed as No. "+String(record.caseNumber).padStart(3,"0")+".");
+      setStatus("Sent as request No. "+String(record.caseNumber).padStart(3,"0")+".");
     }catch(e){
       var copy = {
         cancelled: "Stopped.",
         invalid_request: "Something went wrong preparing this — try shortening the request.",
-        prompt_too_large: "That's too long for one matter — try trimming it.",
+        prompt_too_large: "That's too long for one request — try trimming it.",
         not_granted: "Live filing needs your permission for this page to use Claude — try again to be asked.",
         sampling_disabled: "Live filing isn't available for this account — bring this to a chat session instead.",
         not_declared: "Live filing isn't available in this view.",
@@ -526,7 +526,7 @@
     card.innerHTML =
       '<div class="case-top">'+
         '<div><div class="case-no mono">No. '+String(d.caseNumber||0).padStart(3,"0")+'</div>'+
-        '<div class="case-time mono">'+(isExample?"for illustration only":(relTime(d.createdAt)+' · '+(d.source==="chat"?"filed from chat":"filed via Docket")))+'</div></div>'+
+        '<div class="case-time mono">'+(isExample?"for illustration only":(relTime(d.createdAt)+' · '+(d.source==="chat"?"sent from chat":"sent from this site")))+'</div></div>'+
         (isExample ? '<span class="example-flag">Example</span>' : '<span class="case-status chip '+statusCls+'">'+ (STATUS_LABEL[d.status]||"Awaiting review") +'</span>')+
       '</div>'+
       '<div class="case-request">“'+escapeHtml(d.request)+'”</div>'+
@@ -572,11 +572,11 @@
 
   function renderLog(docs){
     caseLog.innerHTML = "";
-    $("#caseLogCount").textContent = docs.length + (docs.length===1 ? " matter" : " matters");
+    $("#caseLogCount").textContent = docs.length + (docs.length===1 ? " request" : " requests");
     $("#caseCount").textContent = docs.length;
     if(docs.length === 0){
       caseLog.appendChild(renderCase(EXAMPLE_CASE, true));
-      var note = el("div","empty-log","No matters filed yet — the card above shows the shape a filed case takes once you submit your first one.");
+      var note = el("div","empty-log","Nothing sent yet — the card above shows what it looks like once you send your first request.");
       caseLog.appendChild(note);
       return;
     }

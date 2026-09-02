@@ -48,14 +48,14 @@ generation spends free-tier character quota. These go through the same
 `cost_bearing_action` HITL checkpoint as everything else — every single
 call, not just the first one. See §4.
 
-### The Docket — a web front end
+### KH HBS Agentic Workforce — a web front end
 
-**[The Docket](https://claude.ai/code/artifact/e2a1d047-54f9-42c4-bdcc-19d3d3c26594)**
+**[KH HBS Agentic Workforce](https://claude.ai/code/artifact/e2a1d047-54f9-42c4-bdcc-19d3d3c26594)**
 is a published, HBS-branded dashboard: a live 3D hub-and-spoke visualization
-plus a form to file a matter directly on the page (calling Claude via the
-page's own `sample` capability — your usage, no separate key) and a Case
-Log you work through by approving or sending back each result. Source in
-`web/docket.html`; see `web/README.md` for exactly what it can and can't
+plus a form to send the team a request directly on the page (calling Claude
+via the page's own `sample` capability — your usage, no separate key) and a
+Work Log you work through by approving or sending back each result. Source
+in `web/docket.html`; see `web/README.md` for exactly what it can and can't
 do — it's an attended, chat-adjacent tool, not a second execution path.
 
 ---
