@@ -79,17 +79,29 @@ model_governance:
 
   approved_free_tier_models:
     anthropic_pro:
-      # Included with an active Claude Pro subscription / Claude Code seat.
-      # Do not substitute a paid-API-only model here.
+      # CORRECTION (was mislabeled): these model IDs are what the
+      # STANDALONE SCRIPT calls via ANTHROPIC_API_KEY and the `anthropic`
+      # Python SDK — that is Anthropic's metered, pay-per-token Developer
+      # API (console.anthropic.com billing), NOT covered by a claude.ai
+      # Pro/Max seat. A Pro/Max subscription has no portable API key at
+      # all. Talking to Eliot in a live Claude Code chat, and using The
+      # Docket's `sample` capability, both use your existing Claude
+      # access directly and need NO key here — this section only matters
+      # if you deliberately want the standalone script to make real
+      # (billed) calls instead of its default offline stub responses.
       chat: "claude-sonnet-5"
       fast: "claude-haiku-4-5-20251001"
       reasoning: "claude-opus-5"
     google_ai_studio:
-      # Google AI Studio free tier (rate-limited, no billing attached).
+      # Genuinely free: aistudio.google.com/apikey issues a rate-limited
+      # key with no billing attached unless you separately enable billing.
       chat: "gemini-2.5-flash"
       research: "gemini-2.5-pro"
     perplexity:
-      # Perplexity free-tier / Pro-included web-grounded search.
+      # NOT reliably free: Perplexity's API is a metered product.
+      # Perplexity Pro has historically included a small monthly API
+      # credit, but that's a Perplexity policy that can change — verify
+      # current terms on their site before assuming any usage is covered.
       search: "sonar"
       deep_research: "sonar-reasoning"
 

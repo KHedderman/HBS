@@ -83,6 +83,12 @@ class ModelRouter:
     # a single integration.
 
     def _call_anthropic(self, model, system_prompt, user_prompt, max_tokens) -> CompletionResult:
+        # NOTE: this is Anthropic's metered, pay-per-token Developer API
+        # (console.anthropic.com), a separate paid product from a claude.ai
+        # Pro/Max seat — there is no portable API key tied to that
+        # subscription. Only set ANTHROPIC_API_KEY if you deliberately want
+        # this standalone script to make real, billed calls; leaving it
+        # unset returns a clearly-labeled stub and costs nothing.
         api_key = env("ANTHROPIC_API_KEY")
         if not api_key:
             return self._stub("anthropic_pro", model, user_prompt)
