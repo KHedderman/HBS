@@ -21,7 +21,7 @@ system:
     functional title, chosen to fit what the role does — never merely
     decorative, and never a contested or living figure. The two hub-level
     roles (Chief of Staff, Memory Curator) take UNIVERSITY-wide figures,
-    since they coordinate across everything below them; the nine Directors
+    since they coordinate across everything below them; the ten Directors
     take HBS-specific figures, since each owns one bounded domain. One
     Director (Accessibility & Compliance) intentionally carries no
     namesake — UDL/WCAG are modern frameworks with no real historical
@@ -298,8 +298,15 @@ agents:
       namesake_note: "Attended Harvard, founded Polaroid — real visual-media-technology pedigree."
       title: "Director of Multimedia Production — the Land Desk"
       model: "anthropic_pro.chat"
-      domains: [video_orchestration, voice, avatars, kinetic_captions]
-      note: "With the ElevenLabs connector active, can generate real audio/voice assets via mcp__ElevenLabs__* — gated per cost_bearing_action every time, not just past quota"
+      domains: [video_orchestration, voice, avatars, kinetic_captions, video_generation, video_editing]
+      tools: [elevenlabs, replicate]
+      note: >
+        With the ElevenLabs connector active, generates real audio/voice via
+        mcp__ElevenLabs__*. With the Replicate connector active (available in
+        Lovable's connector catalog — runs open-source video/image/audio
+        generation models), generates or edits real video, not just a
+        script. Both gated per cost_bearing_action every time, not just past
+        quota.
 
     - id: analytics_reporting
       namesake: "Henderson"
@@ -315,6 +322,23 @@ agents:
       title: "Director of Accessibility & Compliance"
       model: "anthropic_pro.fast"
       domains: [udl_audit, reading_level_audit, cognitive_load_audit]
+
+    - id: content_production
+      namesake: "Copeland"
+      namesake_full: "Melvin T. Copeland"
+      namesake_note: >
+        Credited with writing HBS's first course-method case (1921) —
+        formalized converting raw research into a usable teaching asset.
+      title: "Director of Content Conversion & Production — the Copeland Desk"
+      model: "anthropic_pro.chat"
+      domains: [research_to_asset_conversion, facilitation_decks, toolkits, infographics, version_control, qa_release_process]
+      note: >
+        Added to cover the job description's "Content Conversion and
+        Production" responsibilities, which weren't cleanly owned by
+        Donham (pedagogical frameworks), Levitt (external growth
+        marketing), or Land (video/audio) — this Director takes existing
+        research/materials and turns them into a specific, released,
+        version-controlled deliverable.
 
 # -----------------------------------------------------------------------------
 # HUMAN-IN-THE-LOOP CHECKPOINTS

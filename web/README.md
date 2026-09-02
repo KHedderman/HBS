@@ -7,7 +7,7 @@ https://claude.ai/code/artifact/e2a1d047-54f9-42c4-bdcc-19d3d3c26594
 It's an HBS-branded dashboard that:
 
 - Renders the hub-and-spoke architecture as a live, draggable 3D scene
-  (Exhibit A) — the Chief of Staff hub with the nine Directors orbiting it.
+  (Exhibit A) — the Chief of Staff hub with the ten Directors orbiting it.
 - Lets you file a new matter directly on the page. Submitting calls Claude
   via the artifact's `sample` capability (billed to *your* Claude usage —
   no separate API key, no metered cost) using a prompt built from the same
