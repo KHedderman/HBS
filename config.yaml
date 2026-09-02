@@ -1,0 +1,200 @@
+# =============================================================================
+# HBS AI Institute — Multi-Agent Content Command Center
+# Master Configuration
+# =============================================================================
+# This file is the single source of truth for model assignment, cost
+# governance, integrations, and the agent roster. Directors and the Chief
+# of Staff read this file at boot — do not hardcode model names elsewhere.
+
+system:
+  name: "HBS AI Institute Content Command Center"
+  version: "1.0.0"
+  owner: "Instructional Designer & AI Product Manager, HBS AI Institute"
+  architecture: "hub-and-spoke"
+  communication_rule: >
+    Directors never communicate with each other. Every request enters
+    through the Chief of Staff (the hub), is dispatched in parallel to one
+    or more Directors (the spokes), and every Director's output returns
+    only to the Chief of Staff for synthesis before reaching the user.
+
+# -----------------------------------------------------------------------------
+# COST & MODEL GOVERNANCE GUARDRAIL
+# -----------------------------------------------------------------------------
+# Rule: every routine must resolve to a free-tier / subscription-included
+# model. If a task requires a model or tool outside this list, the system
+# MUST raise a PaidTierRequiredError and route to a HITL checkpoint instead
+# of silently spending money.
+model_governance:
+  enforce_free_tier_only: true
+  default_provider: "anthropic_pro"
+
+  approved_free_tier_models:
+    anthropic_pro:
+      # Included with an active Claude Pro subscription / Claude Code seat.
+      # Do not substitute a paid-API-only model here.
+      chat: "claude-sonnet-5"
+      fast: "claude-haiku-4-5-20251001"
+      reasoning: "claude-opus-5"
+    google_ai_studio:
+      # Google AI Studio free tier (rate-limited, no billing attached).
+      chat: "gemini-2.5-flash"
+      research: "gemini-2.5-pro"
+    perplexity:
+      # Perplexity free-tier / Pro-included web-grounded search.
+      search: "sonar"
+      deep_research: "sonar-reasoning"
+
+  disallowed_without_hitl_approval:
+    - "any model billed per-token outside an included subscription"
+    - "any Anthropic/OpenAI/Google model call using a metered pay-as-you-go key"
+    - "any third-party paid API (stock footage, paid stock TTS tiers, etc.)"
+    - "ElevenLabs usage beyond the free character quota"
+    - "Veo 3.1 / Google Vids usage beyond included Workspace/AI Studio quota"
+
+  escalation_policy:
+    # When a Director's task would exceed the free tier, the router pauses
+    # and presents exactly this choice to the human (see hitl_checkpoints).
+    on_paid_tier_required:
+      - "keep_free_path"      # degrade gracefully to nearest free-tier option
+      - "flag_for_manual_upgrade"  # log the request, do NOT spend, wait on user
+
+# -----------------------------------------------------------------------------
+# INTEGRATIONS
+# -----------------------------------------------------------------------------
+integrations:
+  github:
+    enabled: true
+    purpose: "Persistent memory sync, PR/code sync for Product Management Director"
+    repo_env_var: "GITHUB_REPO"          # e.g. "khedderman/hbs"
+    token_env_var: "GITHUB_TOKEN"
+    memory_path: "memory/long_term"
+    fallback: "local_git_commit"          # used when no token is present
+
+  notion:
+    enabled: true
+    purpose: "Long-term organizational memory, transcripts, context logs"
+    token_env_var: "NOTION_API_KEY"
+    database_id_env_var: "NOTION_MEMORY_DATABASE_ID"
+
+  airtable:
+    enabled: true
+    purpose: "Pipeline & activity tracking (initiatives, tasks, status)"
+    token_env_var: "AIRTABLE_API_KEY"
+    base_id_env_var: "AIRTABLE_BASE_ID"
+    table_env_var: "AIRTABLE_PIPELINE_TABLE"
+
+  perplexity:
+    enabled: true
+    purpose: "Web-grounded research for Market Intelligence Director"
+    token_env_var: "PERPLEXITY_API_KEY"
+
+  google_ai_studio:
+    enabled: true
+    purpose: "NotebookLM/Gemini ingestion for Pedagogical Synthesis Director"
+    token_env_var: "GOOGLE_AI_STUDIO_API_KEY"
+
+  lovable:
+    enabled: false
+    purpose: "Receives UI/UX Director wireframe + component specs (manual handoff by default)"
+
+  multimedia:
+    google_vids: { enabled: false, note: "Manual handoff unless Workspace quota confirmed" }
+    veo: { enabled: false, note: "Requires HITL approval — quota-limited" }
+    elevenlabs: { enabled: false, note: "Free tier only — HITL past quota" }
+    descript: { enabled: false, note: "Manual handoff by default" }
+
+# -----------------------------------------------------------------------------
+# AGENT ROSTER
+# -----------------------------------------------------------------------------
+agents:
+  chief_of_staff:
+    role: "Executive interface & Intelligent Router (Hub)"
+    model: "anthropic_pro.chat"
+    responsibilities:
+      - "Sole point of contact with the user"
+      - "Classify intent and dispatch to one or more Directors in parallel"
+      - "Query the Memory Curator before every routing decision"
+      - "Synthesize Director outputs into one unified response"
+      - "Enforce HITL checkpoints before any cost-bearing or high-stakes action"
+
+  memory_curator:
+    role: "Persistent context engine (Core Pillar)"
+    model: "anthropic_pro.fast"
+    responsibilities:
+      - "Curate and store session transcripts and structured knowledge"
+      - "Sync memory to GitHub (memory/long_term) and Notion"
+      - "Serve recall() queries to the Chief of Staff and Directors"
+
+  directors:
+    - id: market_intelligence
+      title: "Director of AI Market & Executive Intelligence"
+      model: "perplexity.deep_research"
+      domains: [ai_market_tracking, executive_briefings, workforce_transformation]
+
+    - id: pedagogical_synthesis
+      title: "Director of Pedagogical Synthesis & Instructional Design"
+      model: "google_ai_studio.research"
+      frameworks: [andragogy, udl, cognitive_load_theory, case_method_design]
+      domains: [course_drafting, session_facilitation_guides, student_success_tracking]
+
+    - id: product_management
+      title: "Director of AI Product Management & Development"
+      model: "anthropic_pro.reasoning"
+      domains: [feature_ideation, prd_generation, technical_architecture, qa_review, github_sync]
+
+    - id: project_management
+      title: "Director of Project Management & Cross-Functional Operations"
+      model: "anthropic_pro.fast"
+      domains: [timelines, task_routing, airtable_sync, notion_sync]
+
+    - id: ui_ux_architecture
+      title: "Director of Interactive UI/UX Architecture"
+      model: "anthropic_pro.chat"
+      domains: [wireframes, component_specs, lovable_handoff]
+
+    - id: growth_content
+      title: "Director of Growth & Omnichannel Content"
+      model: "anthropic_pro.chat"
+      domains: [linkedin, newsletter, instagram, content_recycling, growth_strategy]
+
+    - id: multimedia_production
+      title: "Director of Multimedia Production"
+      model: "anthropic_pro.chat"
+      domains: [video_orchestration, voice, avatars, kinetic_captions]
+
+    - id: analytics_reporting
+      title: "Director of Analytics & Leadership Reporting"
+      model: "anthropic_pro.reasoning"
+      domains: [feedback_analysis, telemetry, iteration_suggestions, leadership_reports]
+
+    - id: accessibility_compliance
+      title: "Director of Accessibility & Compliance"
+      model: "anthropic_pro.fast"
+      domains: [udl_audit, reading_level_audit, cognitive_load_audit]
+
+# -----------------------------------------------------------------------------
+# HUMAN-IN-THE-LOOP CHECKPOINTS
+# -----------------------------------------------------------------------------
+hitl_checkpoints:
+  - id: strategic_approval
+    trigger: "Any output that commits HBS AI Institute to a public position, partnership, or curriculum change"
+    action: "block_until_approved"
+
+  - id: pedagogical_review
+    trigger: "Any course content, facilitation guide, or student-facing material before publication"
+    action: "block_until_approved"
+
+  - id: cost_bearing_action
+    trigger: "Any Director request that would exceed an approved free-tier / included quota"
+    action: "present_choice"
+    choices: ["keep_free_path", "flag_for_manual_upgrade"]
+
+  - id: external_publish
+    trigger: "Any action that posts externally (LinkedIn, Instagram, GitHub PR merge, Notion publish)"
+    action: "block_until_approved"
+
+logging:
+  qa_logs_dir: "qa_logs"
+  routing_log: "qa_logs/routing_log.jsonl"
+  hitl_decision_log: "qa_logs/hitl_decision_log.jsonl"
+  outputs_dir: "outputs"

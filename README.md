@@ -1,0 +1,284 @@
+# HBS AI Institute — Multi-Agent Content Command Center
+
+A hierarchical **hub-and-spoke** multi-agent system built for production use
+by the Instructional Designer & AI Product Manager at the HBS AI Institute.
+One executive interface (the **Chief of Staff**) routes every request to
+specialized **Directors**, enforces cost and approval guardrails, and
+persists organizational memory across sessions.
+
+---
+
+## 1. Architecture at a glance
+
+```mermaid
+flowchart TB
+    U["👤 You<br/>(sole human interface)"] --> COS
+
+    subgraph HUB["THE HUB"]
+        COS["🧭 Chief of Staff<br/>Intelligent Router"]
+        MC["🧠 Memory Curator<br/>persistent context engine"]
+        COS <--> MC
+    end
+
+    COS -->|"parallel dispatch"| D1
+    COS -->|"parallel dispatch"| D2
+    COS -->|"parallel dispatch"| D3
+    COS -->|"parallel dispatch"| D4
+    COS -->|"parallel dispatch"| D5
+    COS -->|"parallel dispatch"| D6
+    COS -->|"parallel dispatch"| D7
+    COS -->|"parallel dispatch"| D8
+    COS -->|"parallel dispatch"| D9
+
+    D1["📈 Market &<br/>Executive Intelligence"] -.->|"output ONLY<br/>back to hub"| COS
+    D2["🎓 Pedagogical Synthesis<br/>& Instructional Design"] -.-> COS
+    D3["🛠️ AI Product Mgmt<br/>& Development"] -.-> COS
+    D4["📋 Project Mgmt &<br/>Cross-Functional Ops"] -.-> COS
+    D5["🎨 Interactive UI/UX<br/>Architecture"] -.-> COS
+    D6["📣 Growth &<br/>Omnichannel Content"] -.-> COS
+    D7["🎬 Multimedia<br/>Production"] -.-> COS
+    D8["📊 Analytics &<br/>Leadership Reporting"] -.-> COS
+    D9["♿ Accessibility &<br/>Compliance"] -.-> COS
+
+    MC <-->|"sync"| GH[("GitHub")]
+    MC <-->|"sync"| NO[("Notion")]
+    D4 <-->|"sync"| AT[("Airtable")]
+
+    COS -->|"strategic / pedagogical /<br/>cost / publish checkpoints"| HITL{{"🛑 Human-in-the-Loop<br/>Checkpoint"}}
+    HITL --> U
+
+    style HUB fill:#1a1a2e,stroke:#e94560,color:#fff
+    style COS fill:#e94560,stroke:#fff,color:#fff
+    style MC fill:#0f3460,stroke:#fff,color:#fff
+    style HITL fill:#f39c12,stroke:#333,color:#000
+```
+
+### ASCII fallback (for terminals / plain-text decks)
+
+```
+                                   ┌───────────────────────┐
+                                   │          YOU           │
+                                   │ (sole human interface) │
+                                   └───────────┬─────────────┘
+                                               │
+                                               ▼
+                        ┌──────────────────────────────────────────┐
+                        │                  THE HUB                  │
+                        │  ┌────────────────┐   ┌──────────────┐   │
+                        │  │ Chief of Staff  │◄─►│Memory Curator│   │
+                        │  │Intelligent Router│   │(core pillar) │   │
+                        │  └────────┬─────────┘   └──────┬───────┘   │
+                        └───────────┼──────────────────────┼─────────┘
+                                    │  parallel dispatch    │ sync
+              ┌─────────────────────┼─────────────────────┐ │
+              ▼          ▼          ▼          ▼           ▼ ▼
+        ┌─────────┐┌─────────┐┌─────────┐┌─────────┐  ┌────────┐┌────────┐
+        │ Market  ││Pedagog. ││ Product ││ Project │  │ GitHub ││ Notion │
+        │ Intel   ││Synthesis││   Mgmt  ││   Mgmt  │  └────────┘└────────┘
+        └────┬────┘└────┬────┘└────┬────┘└────┬────┘
+              (+ UI/UX, Growth, Multimedia, Analytics, Accessibility — 9 total)
+              │          │          │          │
+              └──────────┴────┬─────┴──────────┘
+                    outputs return ONLY to the Chief of Staff
+                               │
+                               ▼
+                    ┌────────────────────┐
+                    │  Synthesized, HITL- │
+                    │  gated final answer │──► YOU
+                    └────────────────────┘
+```
+
+**The one rule that defines this architecture:** Directors never talk to
+each other. Each one works in parallel inside its own domain and hands its
+polished output back only to the Chief of Staff, which synthesizes
+everything into a single unified response.
+
+---
+
+## 2. The Hub
+
+| Component | Role |
+|---|---|
+| **Chief of Staff** (`agents/chief_of_staff.py`) | Your sole interface. Classifies every request (Intelligent Router), queries the Memory Curator, dispatches to matched Directors in parallel, gates results through HITL checkpoints, synthesizes the final answer. |
+| **Memory Curator** (`agents/memory_curator.py`) | Runs alongside the hub as a persistent context engine. Curates every exchange into structured long-term memory, serves `recall()` to inform future routing, and syncs to GitHub + Notion. |
+
+### How memory curation works
+
+1. Every request first calls `MemoryCurator.recall()` — a keyword-overlap
+   search over `memory/long_term/knowledge_base.jsonl` — so the Chief of
+   Staff and Directors have prior context before they act.
+2. Every completed exchange is handed to `MemoryCurator.remember()`, which:
+   - Appends the raw turn to `memory/session_logs/<date>.jsonl` (audit trail).
+   - Appends a curated record to `memory/long_term/knowledge_base.jsonl`.
+   - Pushes that file to **GitHub** (`database_sync/github_sync.py` — uses
+     the GitHub API if `GITHUB_TOKEN`/`GITHUB_REPO` are set, otherwise
+     commits locally so a human controls the push).
+   - Creates a page in **Notion** (`database_sync/notion_sync.py`) tagged
+     and titled from the request, with the synthesized response as the body.
+3. See `memory/schema.md` for the exact record schema and how to upgrade
+   `recall()` to an embeddings-backed retriever later without touching any
+   caller.
+
+---
+
+## 3. The Spokes — 9 Specialized Directors
+
+| # | Director | Primary model (free-tier) | Domain |
+|---|---|---|---|
+| 1 | AI Market & Executive Intelligence | Perplexity `sonar-reasoning` | Product/market tracking, workforce transformation, executive briefings |
+| 2 | Pedagogical Synthesis & Instructional Design | Google AI Studio `gemini-2.5-pro` | Andragogy, UDL, Cognitive Load Theory, case-method design, course drafting |
+| 3 | AI Product Management & Development | Claude (Pro-included) `claude-opus-5` | Feature ideation, PRDs, architecture, QA review, GitHub PR sync |
+| 4 | Project Management & Cross-Functional Ops | Claude `claude-haiku-4-5` | Timelines, task routing, Airtable/Notion sync |
+| 5 | Interactive UI/UX Architecture | Claude `claude-sonnet-5` | Wireframes, component specs, Lovable handoff |
+| 6 | Growth & Omnichannel Content | Claude `claude-sonnet-5` | LinkedIn/newsletter/Instagram, content recycling, growth strategy |
+| 7 | Multimedia Production | Claude `claude-sonnet-5` (orchestration only) | Google Vids, Veo 3.1, ElevenLabs, Descript specs |
+| 8 | Analytics & Leadership Reporting | Claude `claude-opus-5` | Feedback/telemetry analysis, iteration suggestions, leadership reports |
+| 9 | Accessibility & Compliance | Claude `claude-haiku-4-5` | UDL/WCAG audit, reading level, cognitive load — the last gate before publish |
+
+Each Director lives in `agents/directors/`, subclasses `BaseDirector`
+(`agents/base_director.py`), and declares:
+- a `system_prompt` encoding its role and frameworks,
+- a `model_ref` resolved against `config.yaml`'s approved free-tier roster,
+- `keywords` the Intelligent Router uses for dispatch.
+
+---
+
+## 4. Cost & Model Governance Guardrail
+
+**Every model call is routed through `agents/llm_provider.py`'s
+`ModelRouter`**, which resolves a logical reference (e.g.
+`anthropic_pro.chat`) against `config.yaml`'s `approved_free_tier_models`.
+If a Director (or you) asks for something outside that list, the router
+raises `PaidTierRequiredError` instead of silently calling a paid endpoint.
+
+The Chief of Staff catches that and raises the mandatory **cost governance
+checkpoint**:
+
+```
+💸 COST GOVERNANCE CHECKPOINT
+   Requested: <model/tool>
+   Reason: <why it's outside the free tier>
+   1) Keep free/included path (degrade gracefully)
+   2) Flag for manual user upgrade (no spend, logged for follow-up)
+```
+
+There is no silent third option that spends money. Every decision is logged
+to `qa_logs/hitl_decision_log.jsonl`.
+
+---
+
+## 5. Human-in-the-Loop (HITL) Checkpoints
+
+Defined in `config.yaml` under `hitl_checkpoints`, enforced by
+`agents/hitl.py`, and triggered automatically by Directors that produce
+gated output (`DirectorOutput.requires_hitl`):
+
+| Checkpoint | Triggered by |
+|---|---|
+| `strategic_approval` | Anything committing HBS AI Institute to a public position, partnership, or curriculum change |
+| `pedagogical_review` | Every output from the Pedagogical Synthesis Director before it reaches learners |
+| `cost_bearing_action` | Any request that would exceed a free/included quota |
+| `external_publish` | Anything posting externally — LinkedIn/Instagram, GitHub PR/merge, Notion publish |
+
+---
+
+## 6. Pipeline & Activity Tracking
+
+The **Director of Project Management** logs every initiative it touches to
+Airtable via `pipelines/pipeline_tracker.py` / `database_sync/airtable_sync.py`.
+Run:
+
+```bash
+python main.py --status
+```
+
+to have the Chief of Staff generate a downloadable Markdown status file in
+`outputs/status_report_<timestamp>.md` mapping current progress across all
+active initiatives.
+
+---
+
+## 7. Directory structure
+
+```
+HBS/
+├── agents/
+│   ├── chief_of_staff.py        # Hub: Intelligent Router + synthesis
+│   ├── memory_curator.py        # Persistent context engine
+│   ├── base_director.py         # Shared Director base class
+│   ├── llm_provider.py          # Model router + cost governance guardrail
+│   ├── hitl.py                  # Human-in-the-Loop checkpoint enforcement
+│   ├── config_loader.py
+│   └── directors/                # The 9 specialized spokes
+│       ├── market_intelligence.py
+│       ├── pedagogical_synthesis.py
+│       ├── product_management.py
+│       ├── project_management.py
+│       ├── ui_ux_architecture.py
+│       ├── growth_content.py
+│       ├── multimedia_production.py
+│       ├── analytics_reporting.py
+│       └── accessibility_compliance.py
+├── memory/
+│   ├── schema.md
+│   ├── long_term/knowledge_base.jsonl   # curated, cross-session memory
+│   └── session_logs/<date>.jsonl        # raw per-day exchange log
+├── pipelines/
+│   ├── pipeline_tracker.py      # Airtable-backed initiative tracking
+│   └── status_report.py         # Downloadable status file generator
+├── database_sync/
+│   ├── github_sync.py
+│   ├── notion_sync.py
+│   └── airtable_sync.py
+├── qa_logs/
+│   ├── accessibility_audit_template.md
+│   ├── routing_log.jsonl        # generated at runtime
+│   └── hitl_decision_log.jsonl  # generated at runtime
+├── outputs/                      # downloadable deliverables land here
+├── config.yaml                   # master config: models, governance, HITL
+├── requirements.txt
+├── .env.example
+└── main.py                       # CLI entrypoint
+```
+
+---
+
+## 8. Setup
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # fill in whichever keys you have — all are optional
+```
+
+The system boots and runs end-to-end with **zero keys configured** — every
+provider and sync adapter degrades to a clearly-labeled stub/no-op so you
+can validate routing, HITL, and synthesis logic before wiring a single
+integration. Add keys to `.env` incrementally as you connect each service.
+
+### Usage
+
+```bash
+# One-shot request
+python main.py "Draft an executive briefing on the latest agentic AI product launches"
+
+# Interactive session
+python main.py
+
+# Generate a pipeline status report
+python main.py --status
+```
+
+---
+
+## 9. Extending the system
+
+- **New Director:** add a subclass of `BaseDirector` in `agents/directors/`,
+  register it in `agents/directors/__init__.py`'s `REGISTRY`, and add its
+  entry to `config.yaml`'s `agents.directors` list.
+- **Smarter routing:** replace the keyword-overlap classifier in
+  `ChiefOfStaff._route()` with an LLM-based intent classifier — call
+  `self.router.complete(...)` the same way Directors do.
+- **Real vector memory:** swap `MemoryCurator.recall()`'s keyword search for
+  an embeddings-backed retriever; the JSONL schema in `memory/schema.md`
+  already has clean fields to embed.
