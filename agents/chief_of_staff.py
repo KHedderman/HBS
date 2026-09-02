@@ -1,4 +1,11 @@
-"""The Chief of Staff — sole executive interface and Intelligent Router (Hub).
+"""Eliot — the Chief of Staff & Intelligent Router (Hub).
+
+Namesake: Charles William Eliot, Harvard's longest-serving president
+(1869-1909), who built the coordinating structure that let Harvard's
+separate schools function as one university. Same job here: one executive
+view across every Director underneath it. See config.yaml's
+`naming_convention` for the full scheme (hub roles get University-wide
+namesakes; Directors get HBS-specific ones).
 
 Flow for every request:
     1. Query the Memory Curator for relevant prior context.
@@ -25,6 +32,8 @@ from agents.memory_curator import MemoryCurator
 
 
 class ChiefOfStaff:
+    namesake = "Eliot"
+
     def __init__(self, non_interactive: bool = False):
         self.router = ModelRouter()
         self.memory = MemoryCurator()
@@ -92,7 +101,7 @@ class ChiefOfStaff:
 
     # -- Synthesis --------------------------------------------------------------
     def _synthesize(self, request: str, outputs: list[DirectorOutput]) -> str:
-        sections = [f"# Chief of Staff — Synthesized Response\n\n**Request:** {request}\n"]
+        sections = [f"# Eliot — Chief of Staff Synthesis\n\n**Request:** {request}\n"]
         for output in outputs:
             flag = " ⚠️ _(stubbed — no API key configured)_" if output.stubbed else ""
             sections.append(f"## {output.title}{flag}\n{output.body}\n")

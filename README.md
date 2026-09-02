@@ -149,10 +149,17 @@ everything into a single unified response.
 
 ## 2. The Hub
 
-| Component | Role |
-|---|---|
-| **Chief of Staff** (`agents/chief_of_staff.py`) | Your sole interface. Classifies every request (Intelligent Router), queries the Memory Curator, dispatches to matched Directors in parallel, gates results through HITL checkpoints, synthesizes the final answer. |
-| **Memory Curator** (`agents/memory_curator.py`) | Runs alongside the hub as a persistent context engine. Curates every exchange into structured long-term memory, serves `recall()` to inform future routing, and syncs to GitHub + Notion. |
+Every hub-and-spoke role carries a real Harvard namesake alongside its
+functional title — chosen to fit the role, never merely decorative, and
+never a contested or living figure. The two hub roles take **University**-wide
+figures (they coordinate across everything below them); the nine Directors
+take **HBS**-specific figures (each owns one bounded domain). See
+`config.yaml`'s `naming_convention` for the full rationale.
+
+| Component | Namesake | Role |
+|---|---|---|
+| **Eliot** — Chief of Staff (`agents/chief_of_staff.py`) | Charles William Eliot, Harvard's longest-serving president (1869–1909) — built the coordinating structure across Harvard's schools | Your sole interface. Classifies every request (Intelligent Router), queries the Memory Curator, dispatches to matched Directors in parallel, gates results through HITL checkpoints, synthesizes the final answer. |
+| **Winsor** — Memory Curator (`agents/memory_curator.py`) | Justin Winsor, Harvard's University Librarian (1877–1897), a founder of American librarianship | Runs alongside the hub as a persistent context engine. Curates every exchange into structured long-term memory, serves `recall()` to inform future routing, and syncs to GitHub + Notion. |
 
 ### How memory curation works
 
@@ -175,17 +182,21 @@ everything into a single unified response.
 
 ## 3. The Spokes — 9 Specialized Directors
 
-| # | Director | Primary model (free-tier) | Domain |
-|---|---|---|---|
-| 1 | AI Market & Executive Intelligence | Perplexity `sonar-reasoning` | Product/market tracking, workforce transformation, executive briefings |
-| 2 | Pedagogical Synthesis & Instructional Design | Google AI Studio `gemini-2.5-pro` | Andragogy, UDL, Cognitive Load Theory, case-method design, course drafting |
-| 3 | AI Product Management & Development | Claude (Pro-included) `claude-opus-5` | Feature ideation, PRDs, architecture, QA review, GitHub PR sync |
-| 4 | Project Management & Cross-Functional Ops | Claude `claude-haiku-4-5` | Timelines, task routing, Airtable/Notion sync |
-| 5 | Interactive UI/UX Architecture | Claude `claude-sonnet-5` | Wireframes, component specs, Lovable handoff |
-| 6 | Growth & Omnichannel Content | Claude `claude-sonnet-5` | LinkedIn/newsletter/Instagram, content recycling, growth strategy |
-| 7 | Multimedia Production | Claude `claude-sonnet-5` (orchestration only) | Google Vids, Veo 3.1, ElevenLabs, Descript specs |
-| 8 | Analytics & Leadership Reporting | Claude `claude-opus-5` | Feedback/telemetry analysis, iteration suggestions, leadership reports |
-| 9 | Accessibility & Compliance | Claude `claude-haiku-4-5` | UDL/WCAG audit, reading level, cognitive load — the last gate before publish |
+| # | Director | Namesake | Primary model (free-tier) | Domain |
+|---|---|---|---|---|
+| 1 | AI Market & Executive Intelligence — *the Doriot Desk* | Georges Doriot, HBS professor, founded the first modern VC firm (ARDC) | Perplexity `sonar-reasoning` | Product/market tracking, workforce transformation, executive briefings |
+| 2 | Pedagogical Synthesis & Instructional Design — *the Donham Desk* | Wallace B. Donham, HBS's second dean, institutionalized the case method | Google AI Studio `gemini-2.5-pro` | Andragogy, UDL, Cognitive Load Theory, case-method design, course drafting |
+| 3 | AI Product Management & Development — *the Aiken Desk* | Howard Aiken, Harvard professor, built the Harvard Mark I | Claude (Pro-included) `claude-opus-5` | Feature ideation, PRDs, architecture, QA review, GitHub PR sync |
+| 4 | Project Management & Cross-Functional Ops — *the Taylor Desk* | Frederick Winslow Taylor, gave HBS's first operations course (1909) | Claude `claude-haiku-4-5` | Timelines, task routing, Airtable/Notion sync |
+| 5 | Interactive UI/UX Architecture — *the Gropius Desk* | Walter Gropius, Harvard GSD, Bauhaus founder | Claude `claude-sonnet-5` | Wireframes, component specs, Lovable handoff |
+| 6 | Growth & Omnichannel Content — *the Levitt Desk* | Theodore Levitt, HBS marketing professor, "Marketing Myopia" | Claude `claude-sonnet-5` | LinkedIn/newsletter/Instagram, content recycling, growth strategy |
+| 7 | Multimedia Production — *the Land Desk* | Edwin Land, attended Harvard, founded Polaroid | Claude `claude-sonnet-5` (orchestration only) | Google Vids, Veo 3.1, ElevenLabs, Descript specs |
+| 8 | Analytics & Leadership Reporting — *the Henderson Desk* | Bruce Henderson, HBS MBA, founded BCG | Claude `claude-opus-5` | Feedback/telemetry analysis, iteration suggestions, leadership reports |
+| 9 | Accessibility & Compliance | *(intentionally unnamed — see below)* | Claude `claude-haiku-4-5` | UDL/WCAG audit, reading level, cognitive load — the last gate before publish |
+
+Accessibility & Compliance carries no namesake on purpose: UDL/WCAG are
+modern frameworks with no real Harvard figure behind them, and forcing one
+on would trivialize it.
 
 Each Director lives in `agents/directors/`, subclasses `BaseDirector`
 (`agents/base_director.py`), and declares:

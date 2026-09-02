@@ -1,10 +1,16 @@
-"""Director of AI Market & Executive Intelligence."""
+"""Director of AI Market & Executive Intelligence — the Doriot Desk.
+
+Namesake: Georges Doriot, HBS professor who founded the first modern VC
+firm (American Research and Development Corporation) specifically to spot
+and fund emerging technology — the same job this Director does.
+"""
 from agents.base_director import BaseDirector
 
 
 class MarketIntelligenceDirector(BaseDirector):
     director_id = "market_intelligence"
-    title = "Director of AI Market & Executive Intelligence"
+    namesake = "Doriot"
+    title = "Director of AI Market & Executive Intelligence — the Doriot Desk"
     model_ref = "perplexity.deep_research"  # web-grounded, free-tier/Pro-included
 
     keywords = [

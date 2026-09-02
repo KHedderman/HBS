@@ -1,10 +1,15 @@
-"""Director of Growth & Omnichannel Content."""
+"""Director of Growth & Omnichannel Content — the Levitt Desk.
+
+Namesake: Theodore Levitt, HBS marketing professor who wrote "Marketing
+Myopia" — a founding voice of modern marketing strategy.
+"""
 from agents.base_director import BaseDirector, DirectorOutput
 
 
 class GrowthContentDirector(BaseDirector):
     director_id = "growth_content"
-    title = "Director of Growth & Omnichannel Content"
+    namesake = "Levitt"
+    title = "Director of Growth & Omnichannel Content — the Levitt Desk"
     model_ref = "anthropic_pro.chat"
 
     keywords = [

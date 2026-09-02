@@ -1,4 +1,7 @@
-"""Director of Multimedia Production.
+"""Director of Multimedia Production — the Land Desk.
+
+Namesake: Edwin Land, who attended Harvard and founded Polaroid — real
+visual-media-technology pedigree.
 
 Two execution paths, both governed by the same gate:
   - Standalone script (this class): no direct API access to any multimedia
@@ -16,7 +19,8 @@ from agents.llm_provider import PaidTierRequiredError
 
 class MultimediaProductionDirector(BaseDirector):
     director_id = "multimedia_production"
-    title = "Director of Multimedia Production"
+    namesake = "Land"
+    title = "Director of Multimedia Production — the Land Desk"
     model_ref = "anthropic_pro.chat"  # used for orchestration/scripting only
 
     keywords = [

@@ -23,11 +23,13 @@ class DirectorOutput:
     requires_hitl: Optional[str] = None  # checkpoint id, if this output must be gated
     metadata: dict[str, Any] = field(default_factory=dict)
     stubbed: bool = False
+    namesake: Optional[str] = None  # e.g. "Doriot" — see config.yaml's naming_convention
 
 
 class BaseDirector:
     director_id: str = "base"
     title: str = "Base Director"
+    namesake: Optional[str] = None  # real Harvard/HBS namesake, or None (see config.yaml)
     model_ref: str = "anthropic_pro.chat"
     system_prompt: str = "You are a specialized director. Be concise and actionable."
 
@@ -50,6 +52,7 @@ class BaseDirector:
                 summary="Paused — requires cost governance decision.",
                 body=str(exc),
                 requires_hitl="cost_bearing_action",
+                namesake=self.namesake,
             )
 
         return DirectorOutput(
@@ -59,6 +62,7 @@ class BaseDirector:
             body=result.text,
             stubbed=result.stubbed,
             metadata={"provider": result.provider, "model": result.model},
+            namesake=self.namesake,
         )
 
     def _complete(self, task: str, context: str):

@@ -121,7 +121,8 @@
     backface-visibility:hidden;
     transition: box-shadow .35s ease, border-color .35s ease, transform .35s ease, background .35s ease;
   }
-  .spoke .name{ font-size:.68rem; font-weight:600; line-height:1.2; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .spoke .name{ font-family:"Newsreader"; font-size:.86rem; font-weight:600; line-height:1.15; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+  .spoke .short{ font-size:.6rem; color:var(--ink-soft); margin-top:.15rem; line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .spoke .tag-row{ display:flex; gap:.2rem; margin-top:.3rem; flex-wrap:wrap; }
   .spoke .tag{ font-family:"IBM Plex Mono"; font-size:.52rem; padding:.04rem .28rem; border-radius:99px; border:1px solid var(--line); color:var(--ink-soft); white-space:nowrap; }
   .spoke.active{
@@ -239,8 +240,8 @@
     <div class="orbit-wrap" id="orbitWrap" aria-hidden="true">
       <div class="orbit" id="orbit">
         <div class="hub">
-          <div class="t1">Chief of<br/>Staff</div>
-          <div class="t2">Intelligent Router</div>
+          <div class="t1">Eliot</div>
+          <div class="t2">Chief of Staff · Router</div>
         </div>
         <div id="spokes"></div>
       </div>
@@ -249,7 +250,8 @@
     <div class="legend">
       <div><span class="swatch" style="background:var(--crimson)"></span><b>Active spoke</b> — dispatched on the selected case</div>
       <div><span class="swatch" style="background:var(--navy)"></span><b>Connector-live</b> — can execute directly via Lovable, ElevenLabs or Granola in a chat session</div>
-      <div><b>Rule:</b> spokes never talk to each other — every output returns only to the Chief of Staff</div>
+      <div><b>Winsor</b> (Memory Curator) works alongside Eliot, off to the side — persisting every case to GitHub &amp; Notion, not shown as a spoke</div>
+      <div><b>Rule:</b> spokes never talk to each other — every output returns only to Eliot</div>
     </div>
   </div>
 </div>
@@ -300,15 +302,15 @@
   "use strict";
 
   var DIRECTORS = [
-    { id:"market_intelligence", title:"Market & Executive Intelligence", model:"Perplexity", domain:"AI market tracking, workforce shifts, exec briefings", connector:false },
-    { id:"pedagogical_synthesis", title:"Pedagogical Synthesis", model:"Gemini", domain:"Andragogy, UDL, cognitive load, case-method design", connector:true, connectorName:"Granola" },
-    { id:"product_management", title:"AI Product Management", model:"Claude · reasoning", domain:"PRDs, architecture, QA review, GitHub sync", connector:false },
-    { id:"project_management", title:"Project Management", model:"Claude · fast", domain:"Timelines, task routing, Airtable/Notion sync", connector:false },
-    { id:"ui_ux_architecture", title:"Interactive UI/UX Architecture", model:"Claude", domain:"Wireframes, component specs, Lovable builds", connector:true, connectorName:"Lovable" },
-    { id:"growth_content", title:"Growth & Omnichannel Content", model:"Claude", domain:"LinkedIn, newsletter, Instagram, recycling", connector:false },
-    { id:"multimedia_production", title:"Multimedia Production", model:"Claude", domain:"Video, voice, avatars, kinetic captions", connector:true, connectorName:"ElevenLabs" },
-    { id:"analytics_reporting", title:"Analytics & Leadership Reporting", model:"Claude · reasoning", domain:"Feedback, telemetry, leadership summaries", connector:false },
-    { id:"accessibility_compliance", title:"Accessibility & Compliance", model:"Claude · fast", domain:"WCAG, reading level, cognitive load audit", connector:false }
+    { id:"market_intelligence", namesake:"Doriot", short:"Market & Executive Intelligence", full:"Director of AI Market & Executive Intelligence", model:"Perplexity", domain:"AI market tracking, workforce shifts, exec briefings", connector:false },
+    { id:"pedagogical_synthesis", namesake:"Donham", short:"Pedagogical Synthesis", full:"Director of Pedagogical Synthesis & Instructional Design", model:"Gemini", domain:"Andragogy, UDL, cognitive load, case-method design", connector:true, connectorName:"Granola" },
+    { id:"product_management", namesake:"Aiken", short:"AI Product Management", full:"Director of AI Product Management & Development", model:"Claude · reasoning", domain:"PRDs, architecture, QA review, GitHub sync", connector:false },
+    { id:"project_management", namesake:"Taylor", short:"Project Management", full:"Director of Project Management & Cross-Functional Operations", model:"Claude · fast", domain:"Timelines, task routing, Airtable/Notion sync", connector:false },
+    { id:"ui_ux_architecture", namesake:"Gropius", short:"Interactive UI/UX Architecture", full:"Director of Interactive UI/UX Architecture", model:"Claude", domain:"Wireframes, component specs, Lovable builds", connector:true, connectorName:"Lovable" },
+    { id:"growth_content", namesake:"Levitt", short:"Growth & Omnichannel Content", full:"Director of Growth & Omnichannel Content", model:"Claude", domain:"LinkedIn, newsletter, Instagram, recycling", connector:false },
+    { id:"multimedia_production", namesake:"Land", short:"Multimedia Production", full:"Director of Multimedia Production", model:"Claude", domain:"Video, voice, avatars, kinetic captions", connector:true, connectorName:"ElevenLabs" },
+    { id:"analytics_reporting", namesake:"Henderson", short:"Analytics & Leadership Reporting", full:"Director of Analytics & Leadership Reporting", model:"Claude · reasoning", domain:"Feedback, telemetry, leadership summaries", connector:false },
+    { id:"accessibility_compliance", namesake:null, short:"Accessibility & Compliance", full:"Director of Accessibility & Compliance", model:"Claude · fast", domain:"WCAG, reading level, cognitive load audit", connector:false }
   ];
 
   var HITL_LABEL = {
@@ -341,8 +343,10 @@
     card.style.setProperty("--i", i);
     card.dataset.id = d.id;
     var tags = '<span class="tag">'+d.model+'</span>' + (d.connector ? '<span class="tag" style="border-color:var(--navy);color:var(--navy)">'+d.connectorName+'</span>' : '');
-    card.title = d.domain;
-    card.innerHTML = '<div class="name">'+escapeHtml(d.title)+'</div><div class="tag-row">'+tags+'</div>';
+    card.title = d.full + (d.namesake ? " — the "+d.namesake+" Desk" : "") + ". " + d.domain;
+    card.innerHTML = '<div class="name">'+escapeHtml(d.namesake||d.short)+'</div>'+
+      '<div class="short">'+escapeHtml(d.namesake?d.short:d.domain)+'</div>'+
+      '<div class="tag-row">'+tags+'</div>';
     spokesWrap.appendChild(card);
   });
 
@@ -398,13 +402,14 @@
 
   function rosterBrief(){
     return DIRECTORS.map(function(d){
-      return "- "+d.id+" — "+d.title+" ("+d.domain+")" + (d.connector ? " [can execute live via "+d.connectorName+" only in a Claude Code chat session — never claim to run this from the website]" : "");
+      var name = d.namesake ? (d.namesake+" — "+d.full) : d.full;
+      return "- "+d.id+" — "+name+" ("+d.domain+")" + (d.connector ? " [can execute live via "+d.connectorName+" only in a Claude Code chat session — never claim to run this from the website]" : "");
     }).join("\n");
   }
 
   function buildPrompt(request){
     return [
-      "You are the Chief of Staff — the Intelligent Router — for the HBS AI Institute Content Command Center, a hub-and-spoke multi-agent system.",
+      "You are Eliot, the Chief of Staff and Intelligent Router for the HBS AI Institute Content Command Center, a hub-and-spoke multi-agent system.",
       "",
       "Roster of Directors (spokes) you may dispatch to — choose only from this list, by id:",
       rosterBrief(),
@@ -496,8 +501,9 @@
 
     var directorsHtml = (d.directors||[]).map(function(dd){
       var meta = directorLookup(dd.id);
+      var label = meta ? (meta.namesake ? (meta.namesake+" · "+meta.short) : meta.short) : dd.id;
       return '<button class="director-chip" data-ids="'+dd.id+'" title="'+escapeHtml(dd.reasoning||"")+'">'+
-             '<span class="dn">'+escapeHtml(meta?meta.title:dd.id)+'</span>'+
+             '<span class="dn">'+escapeHtml(label)+'</span>'+
              '<span class="dm">'+escapeHtml(meta?meta.model:"")+'</span></button>';
     }).join("");
 

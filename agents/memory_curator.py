@@ -1,4 +1,10 @@
-"""The Memory Curator — persistent context engine (Core Pillar).
+"""Winsor — the Memory Curator, persistent context engine (Core Pillar).
+
+Namesake: Justin Winsor, Harvard's University Librarian (1877-1897) and a
+founding figure of American librarianship, who built the systems for
+organizing and preserving the university's collective knowledge. Same job
+here, and — like the Chief of Staff's Eliot — a University-wide namesake
+rather than an HBS-specific one, since this role serves every Director.
 
 Runs alongside the Chief of Staff, not underneath it: every routing
 decision consults `recall()` first, and every completed exchange is handed
@@ -25,6 +31,8 @@ LONG_TERM_PATH = REPO_ROOT / "memory" / "long_term" / "knowledge_base.jsonl"
 
 
 class MemoryCurator:
+    namesake = "Winsor"
+
     def __init__(self):
         SESSION_LOG_DIR.mkdir(parents=True, exist_ok=True)
         LONG_TERM_PATH.parent.mkdir(parents=True, exist_ok=True)

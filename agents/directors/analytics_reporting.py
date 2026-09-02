@@ -1,10 +1,15 @@
-"""Director of Analytics & Leadership Reporting."""
+"""Director of Analytics & Leadership Reporting — the Henderson Desk.
+
+Namesake: Bruce Henderson, HBS MBA who founded BCG and invented the
+growth-share matrix — analytics turned into strategy.
+"""
 from agents.base_director import BaseDirector
 
 
 class AnalyticsReportingDirector(BaseDirector):
     director_id = "analytics_reporting"
-    title = "Director of Analytics & Leadership Reporting"
+    namesake = "Henderson"
+    title = "Director of Analytics & Leadership Reporting — the Henderson Desk"
     model_ref = "anthropic_pro.reasoning"
 
     keywords = [

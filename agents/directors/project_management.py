@@ -1,11 +1,16 @@
-"""Director of Project Management & Cross-Functional Operations."""
+"""Director of Project Management & Cross-Functional Operations — the Taylor Desk.
+
+Namesake: Frederick Winslow Taylor, who gave HBS's first operations /
+"scientific management" course in 1909.
+"""
 from agents.base_director import BaseDirector, DirectorOutput
 from pipelines.pipeline_tracker import PipelineTracker
 
 
 class ProjectManagementDirector(BaseDirector):
     director_id = "project_management"
-    title = "Director of Project Management & Cross-Functional Operations"
+    namesake = "Taylor"
+    title = "Director of Project Management & Cross-Functional Operations — the Taylor Desk"
     model_ref = "anthropic_pro.fast"
 
     keywords = [

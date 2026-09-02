@@ -1,9 +1,15 @@
-"""Director of Accessibility & Compliance."""
+"""Director of Accessibility & Compliance.
+
+Intentionally the one Director with no historical namesake — see
+config.yaml's `naming_convention`: UDL/WCAG are modern frameworks with no
+real Harvard figure behind them, and forcing one on would trivialize it.
+"""
 from agents.base_director import BaseDirector, DirectorOutput
 
 
 class AccessibilityComplianceDirector(BaseDirector):
     director_id = "accessibility_compliance"
+    namesake = None
     title = "Director of Accessibility & Compliance"
     model_ref = "anthropic_pro.fast"
 

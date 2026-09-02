@@ -1,4 +1,7 @@
-"""Director of Interactive UI/UX Architecture.
+"""Director of Interactive UI/UX Architecture — the Gropius Desk.
+
+Namesake: Walter Gropius, Harvard GSD professor and Bauhaus founder — an
+actual architecture pioneer (cross-school pun intended).
 
 Two execution paths, both governed by the same gate:
   - Standalone script (this class): no Lovable API access — always produces
@@ -14,7 +17,8 @@ from agents.base_director import BaseDirector
 
 class UIUXArchitectureDirector(BaseDirector):
     director_id = "ui_ux_architecture"
-    title = "Director of Interactive UI/UX Architecture"
+    namesake = "Gropius"
+    title = "Director of Interactive UI/UX Architecture — the Gropius Desk"
     model_ref = "anthropic_pro.chat"
 
     keywords = [

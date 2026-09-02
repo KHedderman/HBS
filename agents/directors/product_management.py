@@ -1,11 +1,16 @@
-"""Director of AI Product Management & Development."""
+"""Director of AI Product Management & Development — the Aiken Desk.
+
+Namesake: Howard Aiken, the Harvard professor who built the Harvard Mark I
+— a real builder/engineer pedigree for this Director's PRD/architecture/PR work.
+"""
 from agents.base_director import BaseDirector, DirectorOutput
 from database_sync import github_sync
 
 
 class ProductManagementDirector(BaseDirector):
     director_id = "product_management"
-    title = "Director of AI Product Management & Development"
+    namesake = "Aiken"
+    title = "Director of AI Product Management & Development — the Aiken Desk"
     model_ref = "anthropic_pro.reasoning"
 
     keywords = [

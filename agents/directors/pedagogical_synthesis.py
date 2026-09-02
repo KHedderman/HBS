@@ -1,10 +1,15 @@
-"""Director of Pedagogical Synthesis & Instructional Design."""
+"""Director of Pedagogical Synthesis & Instructional Design — the Donham Desk.
+
+Namesake: Wallace B. Donham, HBS's second dean, who institutionalized the
+case method as HBS's core pedagogy.
+"""
 from agents.base_director import BaseDirector, DirectorOutput
 
 
 class PedagogicalSynthesisDirector(BaseDirector):
     director_id = "pedagogical_synthesis"
-    title = "Director of Pedagogical Synthesis & Instructional Design"
+    namesake = "Donham"
+    title = "Director of Pedagogical Synthesis & Instructional Design — the Donham Desk"
     model_ref = "google_ai_studio.research"  # NotebookLM/Gemini-aligned free tier
 
     keywords = [

@@ -8,7 +8,7 @@
 
 system:
   name: "HBS AI Institute Content Command Center"
-  version: "1.1.0"
+  version: "1.2.0"
   owner: "Instructional Designer & AI Product Manager, HBS AI Institute"
   architecture: "hub-and-spoke"
   communication_rule: >
@@ -16,6 +16,16 @@ system:
     through the Chief of Staff (the hub), is dispatched in parallel to one
     or more Directors (the spokes), and every Director's output returns
     only to the Chief of Staff for synthesis before reaching the user.
+  naming_convention: >
+    Every hub-and-spoke role carries a real Harvard namesake alongside its
+    functional title, chosen to fit what the role does — never merely
+    decorative, and never a contested or living figure. The two hub-level
+    roles (Chief of Staff, Memory Curator) take UNIVERSITY-wide figures,
+    since they coordinate across everything below them; the nine Directors
+    take HBS-specific figures, since each owns one bounded domain. One
+    Director (Accessibility & Compliance) intentionally carries no
+    namesake — UDL/WCAG are modern frameworks with no real historical
+    figure behind them, and forcing one on would trivialize it.
 
 # -----------------------------------------------------------------------------
 # OPERATING MODES
@@ -183,7 +193,14 @@ integrations:
 # -----------------------------------------------------------------------------
 agents:
   chief_of_staff:
-    role: "Executive interface & Intelligent Router (Hub)"
+    namesake: "Eliot"
+    namesake_full: "Charles William Eliot"
+    namesake_note: >
+      Harvard's longest-serving president (1869–1909) — built the
+      coordinating structure that let Harvard's separate schools function
+      as one university. Exactly the hub's job: one executive view across
+      everything underneath it.
+    role: "Eliot — Chief of Staff & Intelligent Router (Hub)"
     model: "anthropic_pro.chat"
     embodiment: >
       In interactive mode (the default), the Chief of Staff IS the live
@@ -198,7 +215,13 @@ agents:
       - "Ask before spending — every time a connector call has a real cost, not just the first time"
 
   memory_curator:
-    role: "Persistent context engine (Core Pillar)"
+    namesake: "Winsor"
+    namesake_full: "Justin Winsor"
+    namesake_note: >
+      Harvard's University Librarian (1877–1897) and a founding figure of
+      American librarianship — built the systems for organizing and
+      preserving the university's collective knowledge.
+    role: "Winsor — Memory Curator (Core Pillar)"
     model: "anthropic_pro.fast"
     responsibilities:
       - "Curate and store session transcripts and structured knowledge"
@@ -208,49 +231,75 @@ agents:
 
   directors:
     - id: market_intelligence
-      title: "Director of AI Market & Executive Intelligence"
+      namesake: "Doriot"
+      namesake_full: "Georges Doriot"
+      namesake_note: "HBS professor, founded the first modern VC firm (ARDC) to spot and fund emerging technology."
+      title: "Director of AI Market & Executive Intelligence — the Doriot Desk"
       model: "perplexity.deep_research"
       domains: [ai_market_tracking, executive_briefings, workforce_transformation]
 
     - id: pedagogical_synthesis
-      title: "Director of Pedagogical Synthesis & Instructional Design"
+      namesake: "Donham"
+      namesake_full: "Wallace B. Donham"
+      namesake_note: "HBS's second dean — institutionalized the case method as HBS's core pedagogy."
+      title: "Director of Pedagogical Synthesis & Instructional Design — the Donham Desk"
       model: "google_ai_studio.research"
       frameworks: [andragogy, udl, cognitive_load_theory, case_method_design]
       domains: [course_drafting, session_facilitation_guides, student_success_tracking, granola_meeting_ingestion]
 
     - id: product_management
-      title: "Director of AI Product Management & Development"
+      namesake: "Aiken"
+      namesake_full: "Howard Aiken"
+      namesake_note: "Harvard professor who built the Harvard Mark I — a real builder/engineer pedigree."
+      title: "Director of AI Product Management & Development — the Aiken Desk"
       model: "anthropic_pro.reasoning"
       domains: [feature_ideation, prd_generation, technical_architecture, qa_review, github_sync]
 
     - id: project_management
-      title: "Director of Project Management & Cross-Functional Operations"
+      namesake: "Taylor"
+      namesake_full: "Frederick Winslow Taylor"
+      namesake_note: "Gave HBS's first operations/'scientific management' course in 1909."
+      title: "Director of Project Management & Cross-Functional Operations — the Taylor Desk"
       model: "anthropic_pro.fast"
       domains: [timelines, task_routing, airtable_sync, notion_sync]
 
     - id: ui_ux_architecture
-      title: "Director of Interactive UI/UX Architecture"
+      namesake: "Gropius"
+      namesake_full: "Walter Gropius"
+      namesake_note: "Harvard GSD, Bauhaus founder — an actual architecture pioneer, cross-school pun intended."
+      title: "Director of Interactive UI/UX Architecture — the Gropius Desk"
       model: "anthropic_pro.chat"
       domains: [wireframes, component_specs, lovable_handoff, lovable_live_build]
       note: "With the Lovable connector active, produces a live build via mcp__Lovable__* — gated per cost_bearing_action, not just a spec"
 
     - id: growth_content
-      title: "Director of Growth & Omnichannel Content"
+      namesake: "Levitt"
+      namesake_full: "Theodore Levitt"
+      namesake_note: "HBS marketing professor, wrote 'Marketing Myopia' — a founding voice of modern marketing strategy."
+      title: "Director of Growth & Omnichannel Content — the Levitt Desk"
       model: "anthropic_pro.chat"
       domains: [linkedin, newsletter, instagram, content_recycling, growth_strategy]
 
     - id: multimedia_production
-      title: "Director of Multimedia Production"
+      namesake: "Land"
+      namesake_full: "Edwin Land"
+      namesake_note: "Attended Harvard, founded Polaroid — real visual-media-technology pedigree."
+      title: "Director of Multimedia Production — the Land Desk"
       model: "anthropic_pro.chat"
       domains: [video_orchestration, voice, avatars, kinetic_captions]
       note: "With the ElevenLabs connector active, can generate real audio/voice assets via mcp__ElevenLabs__* — gated per cost_bearing_action every time, not just past quota"
 
     - id: analytics_reporting
-      title: "Director of Analytics & Leadership Reporting"
+      namesake: "Henderson"
+      namesake_full: "Bruce Henderson"
+      namesake_note: "HBS MBA, founded BCG, invented the growth-share matrix — analytics into strategy."
+      title: "Director of Analytics & Leadership Reporting — the Henderson Desk"
       model: "anthropic_pro.reasoning"
       domains: [feedback_analysis, telemetry, iteration_suggestions, leadership_reports]
 
     - id: accessibility_compliance
+      namesake: null
+      namesake_note: "Intentionally unnamed — see naming_convention above."
       title: "Director of Accessibility & Compliance"
       model: "anthropic_pro.fast"
       domains: [udl_audit, reading_level_audit, cognitive_load_audit]
