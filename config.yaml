@@ -8,7 +8,7 @@
 
 system:
   name: "HBS AI Institute Content Command Center"
-  version: "1.0.0"
+  version: "1.1.0"
   owner: "Instructional Designer & AI Product Manager, HBS AI Institute"
   architecture: "hub-and-spoke"
   communication_rule: >
@@ -16,6 +16,45 @@ system:
     through the Chief of Staff (the hub), is dispatched in parallel to one
     or more Directors (the spokes), and every Director's output returns
     only to the Chief of Staff for synthesis before reaching the user.
+
+# -----------------------------------------------------------------------------
+# OPERATING MODES
+# -----------------------------------------------------------------------------
+# Two independent ways this system can run. They share config.yaml,
+# memory/, qa_logs/, and pipelines/ — they are not separate systems.
+operating_mode:
+  default: interactive
+
+  interactive:
+    description: >
+      The primary, current mode. You talk directly to the Chief of Staff in
+      a live Claude Code chat session. Claude embodies the hub: it reads
+      this file as its operating contract, routes to Director personas by
+      their system prompts (agents/directors/), calls connector-based tools
+      (Lovable, ElevenLabs, Granola, Notion) LIVE when they're connected,
+      and asks you directly in conversation before anything cost-bearing or
+      externally-published — no stdin prompts, no scripts running unattended.
+    requires: "An active chat session — nothing runs when you're not here."
+
+  unattended:
+    enabled: false
+    description: >
+      The standalone Python system (main.py, agents/chief_of_staff.py) is
+      fully built and can run headless (cron, GitHub Actions, etc.) reading
+      API keys from .env instead of live chat connectors. It stays OFF
+      until you deliberately turn it on.
+    how_to_request: >
+      To queue a specific task for unattended execution without enabling
+      the whole system: ask the Chief of Staff to
+      `pipelines.pipeline_tracker.PipelineTracker.queue_unattended_request()`.
+      This logs the request with status "Queued — unattended mode disabled"
+      and executes nothing until you explicitly flip `enabled: true` here
+      (or run `main.py` yourself with a human at the keyboard to answer
+      each HITL prompt, which is attended, not unattended).
+    never_auto_enables: >
+      No Director, no HITL "yes", and no connector action may flip this
+      flag. Only you, editing this file (or asking Claude to, with an
+      explicit instruction naming unattended mode), turns it on.
 
 # -----------------------------------------------------------------------------
 # COST & MODEL GOVERNANCE GUARDRAIL
@@ -48,12 +87,18 @@ model_governance:
     - "any model billed per-token outside an included subscription"
     - "any Anthropic/OpenAI/Google model call using a metered pay-as-you-go key"
     - "any third-party paid API (stock footage, paid stock TTS tiers, etc.)"
-    - "ElevenLabs usage beyond the free character quota"
+    - "ElevenLabs generation usage beyond the free character quota"
     - "Veo 3.1 / Google Vids usage beyond included Workspace/AI Studio quota"
+    - "any Lovable send_message / create_project call — these spend Lovable
+       workspace credits every time, connector or not. Being 'connected'
+       is not the same as being free; ask before every build/edit, not
+       just the first one."
 
   escalation_policy:
     # When a Director's task would exceed the free tier, the router pauses
     # and presents exactly this choice to the human (see hitl_checkpoints).
+    # Default bias when unsure or when quota/cost is unknown: ask, don't spend.
+    default_when_uncertain: "flag_for_manual_upgrade"
     on_paid_tier_required:
       - "keep_free_path"      # degrade gracefully to nearest free-tier option
       - "flag_for_manual_upgrade"  # log the request, do NOT spend, wait on user
@@ -73,8 +118,10 @@ integrations:
   notion:
     enabled: true
     purpose: "Long-term organizational memory, transcripts, context logs"
+    access_mode: "api_key"   # unattended path
     token_env_var: "NOTION_API_KEY"
     database_id_env_var: "NOTION_MEMORY_DATABASE_ID"
+    chat_connector_status: "installed, not yet connected — finish connecting for live in-chat use"
 
   airtable:
     enabled: true
@@ -93,14 +140,42 @@ integrations:
     purpose: "NotebookLM/Gemini ingestion for Pedagogical Synthesis Director"
     token_env_var: "GOOGLE_AI_STUDIO_API_KEY"
 
+  granola:
+    enabled: true
+    purpose: >
+      Meeting transcript ingestion for the Memory Curator and Pedagogical
+      Synthesis Director (session facilitation notes, student feedback
+      captured live, internal planning meetings).
+    access_mode: "connector_only"   # no public REST API for personal accounts —
+                                      # interactive chat mode only, not available
+                                      # to the unattended script
+    chat_connector_status: "connected"
+    workflow: >
+      In an interactive chat session, Claude reads a meeting via the
+      Granola connector, then hands the transcript to
+      MemoryCurator.ingest_external_transcript() so it's curated and
+      synced like any other memory entry.
+
   lovable:
-    enabled: false
-    purpose: "Receives UI/UX Director wireframe + component specs (manual handoff by default)"
+    enabled: true
+    purpose: "UI/UX Director hands off wireframes as a live Lovable build, not just a spec"
+    access_mode: "connector_only"   # no .env key path — chat-driven only
+    chat_connector_status: "connected"
+    cost_note: >
+      Every send_message / create_project call spends Lovable workspace
+      credits. Treat each one as a cost_bearing_action HITL checkpoint —
+      never assumed pre-approved just because the connector is active.
 
   multimedia:
     google_vids: { enabled: false, note: "Manual handoff unless Workspace quota confirmed" }
     veo: { enabled: false, note: "Requires HITL approval — quota-limited" }
-    elevenlabs: { enabled: false, note: "Free tier only — HITL past quota" }
+    elevenlabs:
+      enabled: true
+      access_mode: "connector_only"
+      chat_connector_status: "connected"
+      cost_note: >
+        Free tier has a monthly character quota. Ask before generating
+        (per cost_bearing_action) rather than assuming remaining quota.
     descript: { enabled: false, note: "Manual handoff by default" }
 
 # -----------------------------------------------------------------------------
@@ -110,18 +185,24 @@ agents:
   chief_of_staff:
     role: "Executive interface & Intelligent Router (Hub)"
     model: "anthropic_pro.chat"
+    embodiment: >
+      In interactive mode (the default), the Chief of Staff IS the live
+      Claude Code chat session talking to you — not a separate process.
+      Claude applies these responsibilities directly in conversation.
     responsibilities:
       - "Sole point of contact with the user"
       - "Classify intent and dispatch to one or more Directors in parallel"
       - "Query the Memory Curator before every routing decision"
       - "Synthesize Director outputs into one unified response"
       - "Enforce HITL checkpoints before any cost-bearing or high-stakes action"
+      - "Ask before spending — every time a connector call has a real cost, not just the first time"
 
   memory_curator:
     role: "Persistent context engine (Core Pillar)"
     model: "anthropic_pro.fast"
     responsibilities:
       - "Curate and store session transcripts and structured knowledge"
+      - "Ingest external transcripts (e.g. Granola meeting notes) via ingest_external_transcript()"
       - "Sync memory to GitHub (memory/long_term) and Notion"
       - "Serve recall() queries to the Chief of Staff and Directors"
 
@@ -135,7 +216,7 @@ agents:
       title: "Director of Pedagogical Synthesis & Instructional Design"
       model: "google_ai_studio.research"
       frameworks: [andragogy, udl, cognitive_load_theory, case_method_design]
-      domains: [course_drafting, session_facilitation_guides, student_success_tracking]
+      domains: [course_drafting, session_facilitation_guides, student_success_tracking, granola_meeting_ingestion]
 
     - id: product_management
       title: "Director of AI Product Management & Development"
@@ -150,7 +231,8 @@ agents:
     - id: ui_ux_architecture
       title: "Director of Interactive UI/UX Architecture"
       model: "anthropic_pro.chat"
-      domains: [wireframes, component_specs, lovable_handoff]
+      domains: [wireframes, component_specs, lovable_handoff, lovable_live_build]
+      note: "With the Lovable connector active, produces a live build via mcp__Lovable__* — gated per cost_bearing_action, not just a spec"
 
     - id: growth_content
       title: "Director of Growth & Omnichannel Content"
@@ -161,6 +243,7 @@ agents:
       title: "Director of Multimedia Production"
       model: "anthropic_pro.chat"
       domains: [video_orchestration, voice, avatars, kinetic_captions]
+      note: "With the ElevenLabs connector active, can generate real audio/voice assets via mcp__ElevenLabs__* — gated per cost_bearing_action every time, not just past quota"
 
     - id: analytics_reporting
       title: "Director of Analytics & Leadership Reporting"

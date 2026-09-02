@@ -67,6 +67,21 @@ class MemoryCurator:
 
         return {"github": github_status, "notion": notion_status}
 
+    def ingest_external_transcript(self, record: dict) -> dict:
+        """Curates a transcript from an external source (currently: Granola
+        meeting notes, via database_sync.granola_sync.normalize_transcript)
+        into the same long-term store as a normal exchange, and syncs it out.
+
+        `record` is expected to carry: source, title, date, transcript —
+        see granola_sync.normalize_transcript() for the exact shape.
+        """
+        return self.remember(
+            request=f"[{record['source']} meeting: {record['title']} ({record['date']})]",
+            synthesized_response=record["transcript"],
+            directors_invoked=["pedagogical_synthesis"],
+            tags=[record["source"], "meeting_transcript"],
+        )
+
     def _append_session_log(self, record: dict) -> None:
         today = dt.date.today().isoformat()
         path = SESSION_LOG_DIR / f"{today}.jsonl"

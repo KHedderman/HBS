@@ -8,6 +8,48 @@ persists organizational memory across sessions.
 
 ---
 
+## 0. Operating modes — read this first
+
+This system runs two genuinely different ways, sharing the same config,
+memory, and pipeline files. **Interactive is the current, default mode.**
+
+| | **Interactive** (default, current) | **Unattended** (built, disabled) |
+|---|---|---|
+| Who's the Chief of Staff? | This live Claude Code chat session — Claude reads `config.yaml` as its operating contract and acts as the hub directly in conversation | `agents/chief_of_staff.py`, run via `python main.py` |
+| Runs when you're not here? | No — never | Yes, if enabled (cron, GitHub Actions, etc.) |
+| Approvals | You're asked in the conversation, live, every time | Blocks on stdin `input()`, or auto-denies in `--unattended` mode |
+| Connector access (Lovable, ElevenLabs, Granola, Notion) | Yes — Claude calls them directly | No — no unattended path exists for connector-only integrations |
+| How to turn it on | It's always on — just talk to your Chief of Staff | Off by default. `config.yaml`'s `operating_mode.unattended.enabled: false` — you flip that flag deliberately, nothing else can |
+
+**You don't have to choose between them.** Keep talking to your Chief of
+Staff here for everything, and if a specific request is genuinely worth
+running unattended later, say so — the Chief of Staff logs it with
+`PipelineTracker.queue_unattended_request()` (status: *"Queued — awaiting
+unattended mode enablement"*) and executes nothing until you explicitly
+turn that mode on.
+
+### Connector-driven Directors
+
+Four integrations are chat-connector-only — they have **no API key / `.env`
+path** at all, because personal accounts don't expose a public REST API for
+them (Granola) or because the natural way to use them is Claude acting live
+on your behalf (Lovable, ElevenLabs):
+
+| Connector | Status | What it changes |
+|---|---|---|
+| **Granola** | ✅ connected | Pedagogical Synthesis Director / Memory Curator can ingest a real meeting transcript via `MemoryCurator.ingest_external_transcript()` instead of you pasting notes in by hand |
+| **Lovable** | ✅ connected | UI/UX Architecture Director can send a build to Lovable directly instead of only handing you a spec |
+| **ElevenLabs** | ✅ connected | Multimedia Production Director can generate real audio/voice instead of only a production spec |
+| **Notion** | ⚠️ installed, not yet connected | Finish connecting it in your chat's connector settings for live in-chat search/write; the `.env`-based unattended path (`NOTION_API_KEY`) still works independently |
+
+**Connected is not the same as free.** Every Lovable `send_message` /
+`create_project` call spends Lovable workspace credits; every ElevenLabs
+generation spends free-tier character quota. These go through the same
+`cost_bearing_action` HITL checkpoint as everything else — every single
+call, not just the first one. See §4.
+
+---
+
 ## 1. Architecture at a glance
 
 ```mermaid
@@ -165,6 +207,13 @@ checkpoint**:
 There is no silent third option that spends money. Every decision is logged
 to `qa_logs/hitl_decision_log.jsonl`.
 
+**This applies identically to connector-based tools.** A connected Lovable
+or ElevenLabs connector (§0) is not pre-approved spend — every
+`send_message`/`create_project` call (Lovable credits) and every generation
+call (ElevenLabs quota) is its own `cost_bearing_action` checkpoint, asked
+in conversation, every single time. "Connected" only means the call is
+*possible*; it never means "go ahead."
+
 ---
 
 ## 5. Human-in-the-Loop (HITL) Checkpoints
@@ -245,6 +294,11 @@ HBS/
 
 ## 8. Setup
 
+**If you're just talking to your Chief of Staff in this chat (§0,
+interactive mode) — there's nothing to set up.** `.env` and the commands
+below are only for running the *standalone* Python system yourself, which
+is optional and off by default.
+
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
@@ -255,11 +309,13 @@ The system boots and runs end-to-end with **zero keys configured** — every
 provider and sync adapter degrades to a clearly-labeled stub/no-op so you
 can validate routing, HITL, and synthesis logic before wiring a single
 integration. Add keys to `.env` incrementally as you connect each service.
+Note: Granola, Lovable, and ElevenLabs have no `.env` entry — they're
+connector-only (§0) and simply aren't reachable from the standalone script.
 
 ### Usage
 
 ```bash
-# One-shot request
+# One-shot request (interactive — you answer HITL prompts on stdin)
 python main.py "Draft an executive briefing on the latest agentic AI product launches"
 
 # Interactive session
@@ -267,6 +323,9 @@ python main.py
 
 # Generate a pipeline status report
 python main.py --status
+
+# Unattended — blocked by default; see config.yaml's operating_mode.unattended
+python main.py --unattended "..."
 ```
 
 ---
