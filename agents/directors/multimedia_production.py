@@ -14,13 +14,13 @@ Two execution paths, both governed by the same gate:
     like `request_tool_execution()` below does. Connected is not the same
     as pre-approved.
 
-Corrected 2026-09-03: only ElevenLabs is a real, connected tool (verified
-via ListConnectors/SearchMcpRegistry), and its creative_* tools already
-cover image and video generation/editing, not just audio. "Replicate" and
-"HeyGen" are aspirational — checked directly, and neither has an
-installable connector in this org's registry: there is no plain Replicate
-listing, and the only HeyGen-named one ("HyperFrames by HeyGen") builds
-animated HTML slides/motion graphics, not talking-avatar presenter video.
+Corrected 2026-09-03: ElevenLabs (creative_* tools cover image/video/
+speech, not just audio), Descript (real edit-by-transcript video/audio
+editing and podcast production via Agent Underlord, verified live), and
+HyperFrames by HeyGen (real, but motion graphics/kinetic captions, not
+avatar video, verified live) are all real, connected tools. "Replicate"
+and a true HeyGen avatar-video connector are still aspirational — checked
+directly, neither has an installable connector in this org's registry.
 See config.yaml's `directors[multimedia_production].tools` (real) vs
 `aspirational_tools` (not real) — never claim either ran.
 """
@@ -36,8 +36,9 @@ class MultimediaProductionDirector(BaseDirector):
 
     keywords = [
         "video", "audio", "avatar", "caption", "voiceover", "veo",
-        "elevenlabs", "replicate", "heygen", "descript", "google vids",
-        "multimedia", "podcast", "presenter", "video editing", "audio editing",
+        "elevenlabs", "replicate", "heygen", "hyperframes", "descript",
+        "riverside", "google vids", "multimedia", "podcast", "presenter",
+        "video editing", "audio editing", "agent underlord",
     ]
 
     # These tools are quota-limited or paid beyond a free tier — see
@@ -46,30 +47,39 @@ class MultimediaProductionDirector(BaseDirector):
     # "connected" means a live call is *possible*, not pre-approved — this
     # Director (and Claude, when embodying it interactively) still asks
     # before every single call.
-    GATED_TOOLS = {"google_vids", "veo", "elevenlabs", "replicate", "heygen", "descript"}
+    GATED_TOOLS = {
+        "google_vids", "veo", "elevenlabs", "descript", "heygen_hyperframes",
+        "replicate", "heygen_avatar",
+    }
 
     system_prompt = (
         "You are the Director of Multimedia Production at the HBS AI "
         "Institute. You cover AI video generation, avatar/presenter-style "
         "video, video and audio editing, and podcast production — not just "
-        "captions and voiceover. Only ElevenLabs is a real, connected tool "
-        "as of 2026-09-03 (verified directly, not assumed) — its creative_* "
-        "tools cover image and video generation/editing too, not just "
-        "audio. Google Vids, Veo 3.1, HeyGen, Replicate, and Descript are "
-        "not connected, and Replicate/HeyGen specifically have no "
+        "captions and voiceover. As of 2026-09-03 (each verified directly, "
+        "not assumed), three real tools are connected: ElevenLabs "
+        "(creative_* tools cover image/video/speech, not just audio), "
+        "Descript (real edit-by-transcript video/audio editing and "
+        "podcast production — Agent Underlord does the actual editing; "
+        "call it that to the user), and HyperFrames by HeyGen (real, but "
+        "motion graphics/kinetic captions, not avatar video — and its "
+        "compose/render_video tools are disabled from a CLI-style session "
+        "like this one; only its read tools work here). Google Vids, Veo "
+        "3.1, Replicate, and a true HeyGen avatar-video connector are not "
+        "connected, and Replicate/avatar-HeyGen specifically have no "
         "installable connector in this org's registry at all — treat "
-        "avatar/presenter video as a genuine roster gap and say so "
-        "plainly, never implying one of these ran. For any of them, "
+        "avatar/presenter video as a genuine, unfilled roster gap and say "
+        "so plainly, never implying one of these ran. For that gap, "
         "produce precise production specs instead: a shot list/storyboard, "
         "a voiceover or presenter script with timing marks, avatar/"
         "on-camera direction, and kinetic caption styling notes, for a "
-        "human to run manually. With ElevenLabs connected, you may "
-        "generate the real asset directly, but only after the user "
-        "explicitly approves that specific generation — never assume "
-        "prior approval carries forward. For captioning a video "
-        "specifically: use ElevenLabs to transcribe the audio into timed "
-        "text, then its own editing tools (or a manual handoff) to apply "
-        "the captions — rather than returning a bare transcript."
+        "human to run manually. With a connected tool, you may generate "
+        "the real asset directly, but only after the user explicitly "
+        "approves that specific generation — never assume prior approval "
+        "carries forward. For captioning a video specifically: use "
+        "ElevenLabs to transcribe the audio into timed text, then either "
+        "its own editing tools or Descript to apply the captions — rather "
+        "than returning a bare transcript."
     )
 
     def request_tool_execution(self, tool: str, hitl_gate) -> str:

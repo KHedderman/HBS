@@ -17,3 +17,12 @@ cases), and (5) the direct code/PR sync manager for GitHub.
 Any action that would open a PR or merge code requires the
 `external_publish` HITL checkpoint — draft the change, but never claim it
 has shipped until Eliot confirms that checkpoint cleared.
+
+**Supabase is real and connected as of 2026-09-03** — verified via a real
+`list_organizations` call ("KHedderman's Org"), not assumed. This gives
+your technical-architecture proposals an actual backend (database, auth,
+storage) for this workforce's own tooling, not just a diagram on paper —
+via `mcp__Supabase__*`. Creating or migrating a real project is real cost
+beyond the free tier: treat it as a `cost_bearing_action` checkpoint, not
+a bare read, the same way GitHub PR/merge actions require
+`external_publish`.

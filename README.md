@@ -39,8 +39,16 @@ on your behalf (Lovable, ElevenLabs):
 |---|---|---|
 | **Granola** | ✅ connected | Pedagogical Synthesis Director / Memory Curator can ingest a real meeting transcript via `MemoryCurator.ingest_external_transcript()` instead of you pasting notes in by hand |
 | **Lovable** | ✅ connected | UI/UX Architecture Director can send a build to Lovable directly instead of only handing you a spec |
-| **ElevenLabs** | ✅ connected | Multimedia Production Director can generate real audio/voice instead of only a production spec |
-| **Notion** | ⚠️ installed, not yet connected | Finish connecting it in your chat's connector settings for live in-chat search/write; the `.env`-based unattended path (`NOTION_API_KEY`) still works independently |
+| **ElevenLabs** | ✅ connected | Multimedia Production Director can generate real image/video/speech, not just audio |
+| **Notion** | ✅ connected | Verified live 2026-09-03 — live in-chat search/write; the `.env`-based unattended path (`NOTION_API_KEY`) still works independently |
+| **Canva** | ✅ connected | Content Conversion & Production Director generates real decks/infographics/toolkits |
+| **Gamma** | ✅ connected | Second real path to a deck/doc for Content Conversion & Production — can't edit an existing generation, only create new ones |
+| **Descript** | ✅ connected | Real mechanism for Multimedia Production's video/audio editing and podcast production (edit-by-transcript via Agent Underlord) — replaces the never-real Replicate reference |
+| **HyperFrames by HeyGen** | ✅ connected | Multimedia Production gets real motion graphics/kinetic captions — **not** avatar/presenter video; that stays a genuine roster gap. `compose`/`render_video` are disabled from a CLI-style session like this one — only its read tools work here |
+| **Figma** | ✅ connected | UI/UX Architecture Director's first real design tool — but the connected seat shows "View" only (starter plan), which commonly means no create/edit; confirm before promising a build |
+| **Supabase** | ✅ connected | Product Management Director gets a real backend (DB/auth/storage) for this workforce's own tooling, not just architecture on paper |
+| **monday.com** | ✅ connected | Project Management Director's real board/task/timeline tool — replaces Airtable, which has never actually shown connected despite being declared in `config.yaml`. Currently on a Pro trial |
+| **Riverside** | ⚠️ installed, not enabled in chat | Directly relevant to Multimedia Production's podcast domain but not yet usable — a candidate to enable, not to assume |
 
 **Connected is not the same as free.** Every Lovable `send_message` /
 `create_project` call spends Lovable workspace credits; every ElevenLabs
@@ -96,7 +104,7 @@ flowchart TB
 
     MC <-->|"sync"| GH[("GitHub")]
     MC <-->|"sync"| NO[("Notion")]
-    D4 <-->|"sync"| AT[("Airtable")]
+    D4 <-->|"sync"| MO[("monday.com")]
 
     COS -->|"strategic / pedagogical /<br/>cost / publish checkpoints"| HITL{{"🛑 Human-in-the-Loop<br/>Checkpoint"}}
     HITL --> U
@@ -188,14 +196,14 @@ take **HBS**-specific figures (each owns one bounded domain). See
 |---|---|---|---|---|
 | 1 | AI Market & Executive Intelligence — *the Doriot Desk* | Georges Doriot, HBS professor, founded the first modern VC firm (ARDC) | Perplexity `sonar-reasoning` | New AI products/capabilities, business & industry impact for executives, Harvard & academic AI research — not competitive intelligence |
 | 2 | Pedagogical Synthesis & Instructional Design — *the Donham Desk* | Wallace B. Donham, HBS's second dean, institutionalized the case method | Google AI Studio `gemini-2.5-pro` | Andragogy, UDL, Cognitive Load Theory, case-method design, course drafting, digital module lessons |
-| 3 | AI Product Management & Development — *the Aiken Desk* | Howard Aiken, Harvard professor, built the Harvard Mark I | Claude `claude-opus-5` | Feature ideation, PRDs, architecture, QA review, GitHub PR sync |
-| 4 | Project Management & Cross-Functional Ops — *the Taylor Desk* | Frederick Winslow Taylor, gave HBS's first operations course (1909) | Claude `claude-haiku-4-5` | Timelines, task routing, Airtable/Notion sync |
-| 5 | Interactive UI/UX Architecture — *the Gropius Desk* | Walter Gropius, Harvard GSD, Bauhaus founder | Claude `claude-sonnet-5` | Wireframes, component specs |
+| 3 | AI Product Management & Development — *the Aiken Desk* | Howard Aiken, Harvard professor, built the Harvard Mark I | Claude `claude-opus-5` (real backend via Supabase) | Feature ideation, PRDs, architecture, QA review, GitHub PR sync |
+| 4 | Project Management & Cross-Functional Ops — *the Taylor Desk* | Frederick Winslow Taylor, gave HBS's first operations course (1909) | Claude `claude-haiku-4-5` | Timelines, task routing, monday.com/Notion sync |
+| 5 | Interactive UI/UX Architecture — *the Gropius Desk* | Walter Gropius, Harvard GSD, Bauhaus founder | Claude `claude-sonnet-5` (real designs via Figma — seat currently view-only) | Wireframes, component specs, interactive prototypes |
 | 6 | Growth & Omnichannel Content — *the Levitt Desk* | Theodore Levitt, HBS marketing professor, "Marketing Myopia" | Claude `claude-sonnet-5` | LinkedIn/newsletter/Instagram, content recycling, growth strategy |
-| 7 | Multimedia Production — *the Land Desk* | Edwin Land, attended Harvard, founded Polaroid | Claude `claude-sonnet-5` (orchestration + real video/audio via ElevenLabs, Replicate, HeyGen) | AI video generation, avatar/presenter video, video & audio editing, podcast production, voiceover, kinetic captions |
+| 7 | Multimedia Production — *the Land Desk* | Edwin Land, attended Harvard, founded Polaroid | Claude `claude-sonnet-5` (orchestration + real audio/video via ElevenLabs, Descript, HyperFrames by HeyGen) | AI video generation, video & audio editing, podcast production, voiceover, kinetic captions/motion graphics — talking-avatar presenter video is still a genuine, unfilled gap |
 | 8 | Analytics & Leadership Reporting — *the Henderson Desk* | Bruce Henderson, HBS MBA, founded BCG | Claude `claude-opus-5` | Feedback/telemetry analysis, iteration suggestions, leadership reports |
 | 9 | Accessibility & Compliance | *(intentionally unnamed — see below)* | Claude `claude-haiku-4-5` | UDL/WCAG audit, reading level, cognitive load — the last gate before publish |
-| 10 | Content Conversion & Production — *the Copeland Desk* | Melvin T. Copeland, wrote HBS's first course-method case (1921) | Claude `claude-sonnet-5` | Converting research into decks/toolkits/infographics/blog posts, version control, QA & release |
+| 10 | Content Conversion & Production — *the Copeland Desk* | Melvin T. Copeland, wrote HBS's first course-method case (1921) | Claude `claude-sonnet-5` (real decks/infographics via Canva, Gamma) | Converting research into decks/toolkits/infographics/blog posts, version control (via `outputs/`), QA & release |
 | 11 | Innovation & Continuous Improvement — *the Christensen Desk* | Clayton Christensen, HBS professor, author of *The Innovator's Dilemma* | Claude `claude-opus-5` | The workforce itself, not a task for an external audience — new AI tool/connector recommendations, refinements to other Directors, coaching Kaitlyn's own practice, adoption material for colleagues — People, Process, and Product |
 
 Accessibility & Compliance carries no namesake on purpose: UDL/WCAG are

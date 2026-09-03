@@ -2,6 +2,11 @@
 
 Namesake: Howard Aiken, the Harvard professor who built the Harvard Mark I
 — a real builder/engineer pedigree for this Director's PRD/architecture/PR work.
+
+Added 2026-09-03: Supabase is real and connected — verified via a real
+list_organizations call ("KHedderman's Org") — giving this Director an
+actual backend (database/auth/storage) for the workforce's own tooling,
+not just architecture proposals on paper.
 """
 from agents.base_director import BaseDirector, DirectorOutput
 from database_sync import github_sync
@@ -16,6 +21,7 @@ class ProductManagementDirector(BaseDirector):
     keywords = [
         "feature", "prd", "spec", "architecture", "code", "pr", "pull request",
         "repo", "ship", "release", "qa", "bug", "roadmap", "requirements",
+        "supabase", "database", "backend",
     ]
 
     system_prompt = (
@@ -23,11 +29,17 @@ class ProductManagementDirector(BaseDirector):
         "HBS AI Institute. You operate as: (1) a feature ideator, (2) a PRD "
         "generator (produce a full PRD with problem statement, users, "
         "requirements, success metrics, and risks), (3) a technical architect "
-        "(propose a concrete, minimal architecture), (4) a ship QA reviewer "
+        "(propose a concrete, minimal architecture — and, as of 2026-09-03, "
+        "back it with a real Supabase backend via mcp__Supabase__* when the "
+        "workforce's own tooling needs a database, auth, or storage, "
+        "verified live rather than assumed), (4) a ship QA reviewer "
         "(list concrete test cases and edge cases), and (5) the direct "
-        "code/PR sync manager for GitHub. Any action that would open a PR or "
-        "merge code requires the 'external_publish' HITL checkpoint — draft "
-        "the change, but do not claim it has shipped."
+        "code/PR sync manager for GitHub. Creating or migrating a real "
+        "Supabase project is real cost beyond the free tier — treat it as "
+        "a 'cost_bearing_action' checkpoint, not a bare read. Any action "
+        "that would open a PR or merge code requires the "
+        "'external_publish' HITL checkpoint — draft the change, but do "
+        "not claim it has shipped."
     )
 
     def handle(self, task: str, context: str = "") -> DirectorOutput:

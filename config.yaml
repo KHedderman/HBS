@@ -151,6 +151,70 @@ integrations:
     token_env_var: "AIRTABLE_API_KEY"
     base_id_env_var: "AIRTABLE_BASE_ID"
     table_env_var: "AIRTABLE_PIPELINE_TABLE"
+    chat_connector_status: "never observed connected in this chat (checked 2026-09-03 via ListConnectors) — monday.com is the real, verified live PM tool now; treat Airtable as declared-only until it actually shows connected."
+
+  monday_com:
+    enabled: true
+    purpose: "Real project/task/board management for the Project Management Director — boards, items, timelines, automations"
+    access_mode: "connector_only"
+    chat_connector_status: "connected"  # verified live 2026-09-03: ListConnectors + a real get_user_context call (account tier: pro, is_during_trial: true)
+    cost_note: >
+      Account is currently on a Pro trial. Not a per-call metered cost like
+      ElevenLabs, but confirm the trial's actual end date and post-trial
+      plan before treating this as a permanent dependency for Taylor's
+      workflow — flag as cost_bearing_action if the trial is at risk of
+      lapsing mid-use.
+
+  figma:
+    enabled: true
+    purpose: "Real wireframes, component specs, and design-to-code/code-to-design for the UI/UX Architecture Director"
+    access_mode: "connector_only"
+    chat_connector_status: "connected"  # verified live 2026-09-03 via a real whoami call
+    seat_caveat: >
+      whoami reports a "View" seat on the starter tier plan. A View seat
+      commonly can only view/comment, not edit or create files — Gropius
+      should confirm actual create/edit capability (e.g. attempt
+      create_new_file on a scratch file) before promising a real Figma
+      build, rather than assuming the connector being "connected" implies
+      full edit access.
+
+  gamma:
+    enabled: true
+    purpose: "Real AI-generated presentations, docs, and social/web pages — an alternative/complement to Canva for the Content Conversion & Production Director"
+    access_mode: "connector_only"
+    chat_connector_status: "connected"  # verified live 2026-09-03 via a real get_themes call (102 themes returned)
+    note: >
+      Cannot edit or modify an existing gamma once generated — only create
+      new ones. Direct the user to the Gamma editor for refinements rather
+      than claiming a follow-up edit is possible here.
+
+  supabase:
+    enabled: true
+    purpose: "Real database/auth/storage backend — for the Product Management Director's own tooling and architecture work, not learner-facing content"
+    access_mode: "connector_only"
+    chat_connector_status: "connected"  # verified live 2026-09-03 via a real list_organizations call ("KHedderman's Org")
+    cost_note: >
+      Creating/running an actual Supabase project can incur real cost
+      beyond the free tier — treat project creation, branching, or
+      migrations as a cost_bearing_action checkpoint, not a bare read.
+
+  descript:
+    enabled: true
+    purpose: "Real video/audio editing (edit-by-transcript), publishing, and transcript/timeline export — the real mechanism for Land's video/audio editing and podcast production, replacing the Replicate/HeyGen aspiration"
+    access_mode: "connector_only"
+    chat_connector_status: "connected"  # verified live 2026-09-03 via a real get_drive_info call
+    note: >
+      Agent Underlord (Descript's own AI editor) does the actual editing
+      when invoked — refer to it by that name to Kaitlyn, since that's
+      what she'll see in the Descript app.
+
+  riverside:
+    enabled: false
+    chat_connector_status: "installed at org level, not enabled in this chat (checked 2026-09-03 via ListConnectors)"
+    note: >
+      Directly relevant to Land's podcast_production domain (podcast
+      prep/recording/clipping/publishing) but not yet usable — flag to
+      Kaitlyn as a candidate to enable, don't assume it's available.
 
   perplexity:
     enabled: true
@@ -220,7 +284,22 @@ integrations:
       cost_note: >
         Free tier has a monthly character quota. Ask before generating
         (per cost_bearing_action) rather than assuming remaining quota.
-    descript: { enabled: false, note: "Manual handoff by default" }
+    heygen_hyperframes:
+      enabled: true
+      access_mode: "connector_only"
+      chat_connector_status: "connected"  # verified live 2026-09-03 via a real list_projects call (0 projects — empty, not broken)
+      note: >
+        This is "HyperFrames by HeyGen" — animated HTML slides/motion
+        graphics (kinetic captions, title cards), NOT talking-avatar
+        presenter video. That gap still stands as of 2026-09-03. Separately:
+        from this kind of session (a CLI/IDE agent with a local
+        filesystem), the connector's own `compose` and `render_video`
+        tools are disabled by HeyGen's own routing — only the read tools
+        (list_projects, get_project, get_project_status, get_render_status)
+        work here. Actually composing/rendering requires installing the
+        local HyperFrames skill (`npx skills add heygen-com/hyperframes`)
+        Kaitlyn's side — say this plainly rather than attempting compose
+        and reporting a spec as if it rendered.
 
 # -----------------------------------------------------------------------------
 # AGENT ROSTER
@@ -295,7 +374,15 @@ agents:
       namesake_note: "Harvard professor who built the Harvard Mark I — a real builder/engineer pedigree."
       title: "Director of AI Product Management & Development — the Aiken Desk"
       model: "anthropic_pro.reasoning"
-      domains: [feature_ideation, prd_generation, technical_architecture, qa_review, github_sync]
+      tools: [github, supabase]
+      domains: [feature_ideation, prd_generation, technical_architecture, qa_review, github_sync, backend_infrastructure]
+      tool_note: >
+        Added 2026-09-03: Supabase is real and connected (verified via a
+        real list_organizations call — "KHedderman's Org"), giving Aiken
+        an actual backend (database/auth/storage) for this workforce's own
+        tooling, not just architecture proposals on paper. Creating or
+        migrating a real project is a cost_bearing_action — gate it, don't
+        just run it because the connector is live.
 
     - id: project_management
       namesake: "Taylor"
@@ -303,7 +390,15 @@ agents:
       namesake_note: "Gave HBS's first operations/'scientific management' course in 1909."
       title: "Director of Project Management & Cross-Functional Operations — the Taylor Desk"
       model: "anthropic_pro.fast"
-      domains: [timelines, task_routing, airtable_sync, notion_sync, sop_development, virtual_program_management, in_person_event_support, institute_scaling_projects]
+      tools: [monday_com, notion]
+      domains: [timelines, task_routing, board_management, notion_sync, sop_development, virtual_program_management, in_person_event_support, institute_scaling_projects]
+      tool_note: >
+        Updated 2026-09-03: monday.com is real and connected (verified via
+        a real get_user_context call — Pro tier, currently on a trial) and
+        is now the real board/task/timeline tool, replacing the
+        never-actually-connected Airtable reference (see
+        integrations.airtable). Confirm the trial's post-trial plan before
+        treating monday.com as a permanent dependency.
 
     - id: ui_ux_architecture
       namesake: "Gropius"
@@ -311,8 +406,19 @@ agents:
       namesake_note: "Harvard GSD, Bauhaus founder — an actual architecture pioneer, cross-school pun intended."
       title: "Director of Interactive UI/UX Architecture — the Gropius Desk"
       model: "anthropic_pro.chat"
-      domains: [wireframes, component_specs, lovable_handoff, lovable_live_build]
-      note: "With the Lovable connector active, produces a live build via mcp__Lovable__* — gated per cost_bearing_action, not just a spec"
+      tools: [figma, lovable]
+      domains: [wireframes, component_specs, interactive_prototypes, figma_design, lovable_handoff, lovable_live_build]
+      note: >
+        Updated 2026-09-03: Figma is now real and connected — verified via
+        a real whoami call — giving Gropius an actual design tool for the
+        first time (real wireframes/mockups/component libraries/FigJam
+        diagrams), not just specs handed to Lovable. Caveat: whoami
+        reports a "View" seat on the starter plan, which commonly means
+        view/comment only, not edit or create — confirm real create/edit
+        capability before promising a Figma build rather than assuming
+        "connected" implies full access. Lovable remains the path from a
+        design/spec to a live, running build — gated per
+        cost_bearing_action, not just a spec, exactly as before.
 
     - id: growth_content
       namesake: "Levitt"
@@ -329,21 +435,25 @@ agents:
       title: "Director of Multimedia Production — the Land Desk"
       model: "anthropic_pro.chat"
       domains: [video_orchestration, voice, avatars, kinetic_captions, video_generation, video_editing, audio_editing, podcast_production]
-      tools: [elevenlabs]
-      aspirational_tools: [replicate, heygen]
+      tools: [elevenlabs, descript, heygen_hyperframes]
+      aspirational_tools: [replicate, heygen_avatar]
       note: >
-        Corrected 2026-09-03: only ElevenLabs is a real, connected tool —
-        verified live, and its mcp__ElevenLabs__* creative_* tools already
-        cover image/video/speech generation and editing, not just audio.
-        `replicate` and `heygen` were declared here but neither has an
-        installable connector in this org's registry (checked via
-        SearchMcpRegistry): there is no plain "Replicate" connector, and
-        the only HeyGen-named listing, "HyperFrames by HeyGen", builds
-        animated HTML slides/motion graphics — not talking-avatar
-        presenter video. Until a real avatar/presenter tool is confirmed
-        available, treat avatar/presenter video as a genuine roster gap,
-        not a connected capability — say so plainly rather than implying
-        HeyGen ran.
+        Updated 2026-09-03: Descript is now real and connected — verified
+        live (get_drive_info returned Kaitlyn's real drive) — and is the
+        actual mechanism for video/audio editing and podcast production
+        (edit-by-transcript via Agent Underlord, publish, transcript/
+        timeline export), replacing the never-real Replicate reference.
+        heygen_hyperframes is also real and connected (verified via
+        list_projects) but is motion graphics/kinetic captions, not
+        avatar video — see integrations.multimedia.heygen_hyperframes for
+        the CLI-session caveat on its compose/render_video tools. True
+        avatar/presenter (talking-head) video remains a genuine, unfilled
+        roster gap — `replicate` and `heygen_avatar` stay in
+        aspirational_tools because no installable connector for either
+        exists in this org's registry. Riverside (podcast prep/recording/
+        clipping) is installed at org level but not enabled in this chat —
+        a candidate worth Kaitlyn enabling given the podcast_production
+        domain, not yet usable.
 
     - id: analytics_reporting
       namesake: "Henderson"
@@ -382,8 +492,17 @@ agents:
         formalized converting raw research into a usable teaching asset.
       title: "Director of Content Conversion & Production — the Copeland Desk"
       model: "anthropic_pro.chat"
-      tools: [canva]
+      tools: [canva, gamma]
       domains: [research_to_asset_conversion, facilitation_decks, toolkits, infographics, blog_posts, version_control, qa_release_process]
+      tool_note: >
+        Added 2026-09-03: Gamma is real and connected (verified via a real
+        get_themes call, 102 themes returned) — a second real path to a
+        polished deck/doc/one-pager alongside Canva. Gamma cannot edit an
+        existing generation after the fact (only create new ones) — point
+        Kaitlyn to the Gamma editor for refinements rather than claiming a
+        follow-up edit is possible here. Pick Canva when brand-kit
+        consistency or export flexibility matters more; Gamma when a fast,
+        theme-driven first draft is the goal.
       note: >
         Added to cover the job description's "Content Conversion and
         Production" responsibilities, which weren't cleanly owned by
