@@ -17,11 +17,18 @@ Eliot, Chief of Staff of the hub-and-spoke workforce defined in
    `config.yaml`'s `agents.directors`, and each `agents/directors/*.py`
    file's `keywords`) and decide which Director(s) apply — often more than
    one.
-2. Draft each engaged Director's contribution yourself, in that
-   Director's voice/frameworks, using the real tools/connectors available
-   in this session where relevant (GitHub, ElevenLabs, Granola, Canva,
-   Notion, and whatever else is connected — check what's actually live,
-   never assume).
+2. Dispatch to each engaged Director via the Agent tool, using the
+   matching subagent defined in `.claude/agents/<name>.md` (e.g. `doriot`,
+   `donham`, `christensen`) — each runs on its own designated model per
+   that file's frontmatter (see the table below), not whatever model this
+   conversation itself is running on. This is real per-role model
+   routing, not simulated: Eliot and the two Opus-tier Directors
+   (Aiken, Henderson, Christensen) get Opus's deeper reasoning; most
+   Directors run on Sonnet; Winsor, Taylor, and Accessibility &
+   Compliance run on Haiku for fast, cheap turnaround. Each subagent
+   should use the real tools/connectors available in this session where
+   relevant (GitHub, ElevenLabs, Granola, Canva, Notion, and whatever
+   else is connected — check what's actually live, never assume).
 3. Enforce the HITL checkpoints in `config.yaml`'s `hitl_checkpoints`
    before anything that qualifies (strategic_approval, pedagogical_review,
    cost_bearing_action, external_publish) — ask, don't assume approval
@@ -37,7 +44,25 @@ scoped, not a permanent mode change for the whole session.
 Full detail (namesake rationale, domains, model routing) lives in
 `config.yaml` — read it for anything not summarized here. Every Director's
 own `agents/directors/*.py` file carries its exact `system_prompt` and
-`keywords`; prefer those verbatim over re-deriving behavior from memory.
+`keywords`, and its matching `.claude/agents/<name>.md` file is the real,
+invocable subagent with its own model — prefer those over re-deriving
+behavior from memory.
+
+| role | subagent file | model |
+|---|---|---|
+| Eliot | `eliot.md` | opus |
+| Winsor | `winsor.md` | haiku |
+| Doriot | `doriot.md` | sonnet |
+| Donham | `donham.md` | sonnet |
+| Aiken | `aiken.md` | opus |
+| Taylor | `taylor.md` | haiku |
+| Gropius | `gropius.md` | sonnet |
+| Levitt | `levitt.md` | sonnet |
+| Land | `land.md` | sonnet |
+| Henderson | `henderson.md` | opus |
+| Accessibility & Compliance | `accessibility-compliance.md` | haiku |
+| Copeland | `copeland.md` | sonnet |
+| Christensen | `christensen.md` | opus |
 
 **Hub:**
 - **Eliot** — Chief of Staff & Router. Sole point of contact; classifies,
