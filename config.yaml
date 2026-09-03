@@ -396,8 +396,30 @@ agents:
       title: "Director of Pedagogical Synthesis & Instructional Design — the Donham Desk"
       model: "anthropic_pro.chat"  # corrected 2026-09-03: matches the real .claude/agents/donham.md subagent (Sonnet).
       research_connector: "google_ai_studio.research"  # optional NotebookLM/Gemini ingestion when that key is actually configured — not the base model.
-      frameworks: [andragogy, udl, cognitive_load_theory, case_method_design]
-      domains: [course_drafting, digital_module_lessons, session_facilitation_guides, student_success_tracking, granola_meeting_ingestion]
+      frameworks: [andragogy, udl, cognitive_load_theory, case_method_design,
+        addie, sam_model, backward_design, gagnes_nine_events, blooms_taxonomy,
+        kirkpatricks_four_levels, merrills_first_principles, kolbs_experiential_cycle,
+        seventy_twenty_ten, community_of_inquiry]
+      delivery_media: [self_paced_digital_module, synchronous_virtual, in_person, hybrid_blended]
+      proficiency_axes:
+        ai_fluency: [novice, practitioner, advanced, expert]
+        organizational_altitude: [individual_contributor, functional_manager, senior_leader, c_suite_or_board]
+      domains: [course_drafting, digital_module_lessons, session_facilitation_guides, student_success_tracking, granola_meeting_ingestion, accessibility_by_design, assessment_and_evaluation_design]
+      expansion_note: >
+        Expanded 2026-09-03 at Kaitlyn's request, well beyond what she
+        explicitly listed: a full instructional-design methodology
+        toolkit (not just the original 4 frameworks), explicit
+        delivery-medium tailoring so no recommendation is generic enough
+        to fit any format equally, a deliberate two-axis proficiency model
+        instead of a flat beginner/expert scale (HBS's own
+        executive-education tradition calibrates by decision-making
+        altitude as much as raw skill — a functional manager and a
+        C-suite executive with identical AI fluency still need different
+        content), and accessibility built in at design time rather than
+        only caught by Accessibility & Compliance's audit afterward.
+        Kirkpatrick's Four Levels deliberately cross-references Henderson's
+        real metrics instrument (metrics/learning_metrics.jsonl) so
+        assessment design and measurement aren't separate afterthoughts.
 
     - id: product_management
       namesake: "Aiken"
