@@ -209,12 +209,43 @@ integrations:
       what she'll see in the Descript app.
 
   riverside:
-    enabled: false
-    chat_connector_status: "installed at org level, not enabled in this chat (checked 2026-09-03 via ListConnectors)"
-    note: >
-      Directly relevant to Land's podcast_production domain (podcast
-      prep/recording/clipping/publishing) but not yet usable — flag to
-      Kaitlyn as a candidate to enable, don't assume it's available.
+    enabled: true
+    purpose: "Real podcast/video recording, editing, captioning, branding, export, and social publishing for the Multimedia Production Director"
+    access_mode: "connector_only"
+    chat_connector_status: "connected"  # Kaitlyn enabled it 2026-09-03; verified live via a real platform_list_studios call ("Kaitlyn Hedderman's Studio")
+    real_tools: >
+      ~60 tools verified present, spanning: editing (remove_fillers,
+      remove_pauses, apply_smart_mutes, set_captions, add_lower_third,
+      add_text_overlay, apply_brand, insert_stock_media/music,
+      set_color_correction, cut_time_ranges, and more), media upload
+      (media_create_media_upload -> upload bytes -> media_finalize_media_upload
+      -> media_get_media; requires a client with local filesystem access,
+      which this session has), platform reads (list/get studios, projects,
+      recordings, edits, transcripts), and real social publishing
+      (social_upload_create, social_get_connected_platforms,
+      social_get_publishing_guidelines, social_get_upload_status).
+    ai_twin_feature: >
+      Confirmed real by Kaitlyn's own screenshot 2026-09-03 of
+      riverside.com/dashboard/.../avatar — "Create Your AI Twin" (BETA).
+      "Your own twin" (from an uploaded recording of Kaitlyn, 2+ min
+      continuous speech, good lighting/quiet background) is available now;
+      "Synthetic twin" (from a photo or prompt) is labeled "Coming soon" —
+      do not treat it as available. This generation step itself was
+      checked directly against the full real tool list above and found
+      NOT exposed there — no create_avatar/generate_twin tool exists, so
+      it is a web-dashboard-only action Kaitlyn must do herself in the
+      browser. UNRESOLVED, not yet tested: whether uploading a video via
+      media_create_media_upload (which the docs describe as landing in
+      the general "Your Media" editing library) also feeds the dedicated
+      AI Twin pipeline, or is a separate mechanism entirely — check
+      media_create_media_upload's exact input schema for an avatar/twin-
+      specific field, and/or test with a real video, before claiming
+      either way. Until resolved, say plainly that Kaitlyn likely still
+      needs to click "Create Your AI Twin" herself even if Land uploads
+      the source video for her.
+      Once a Twin video exists as a project asset (by whatever path), all
+      the real editing/caption/brand/export/social-publish tools above
+      apply to it normally — that part is fully real and connector-driven.
 
   perplexity:
     enabled: true
@@ -434,26 +465,36 @@ agents:
       namesake_note: "Attended Harvard, founded Polaroid — real visual-media-technology pedigree."
       title: "Director of Multimedia Production — the Land Desk"
       model: "anthropic_pro.chat"
-      domains: [video_orchestration, voice, avatars, kinetic_captions, video_generation, video_editing, audio_editing, podcast_production]
-      tools: [elevenlabs, descript, heygen_hyperframes]
+      domains: [video_orchestration, voice, avatars, kinetic_captions, video_generation, video_editing, audio_editing, podcast_production, social_publishing]
+      tools: [elevenlabs, descript, heygen_hyperframes, riverside]
       aspirational_tools: [replicate, heygen_avatar]
       note: >
-        Updated 2026-09-03: Descript is now real and connected — verified
-        live (get_drive_info returned Kaitlyn's real drive) — and is the
-        actual mechanism for video/audio editing and podcast production
-        (edit-by-transcript via Agent Underlord, publish, transcript/
-        timeline export), replacing the never-real Replicate reference.
-        heygen_hyperframes is also real and connected (verified via
-        list_projects) but is motion graphics/kinetic captions, not
-        avatar video — see integrations.multimedia.heygen_hyperframes for
-        the CLI-session caveat on its compose/render_video tools. True
-        avatar/presenter (talking-head) video remains a genuine, unfilled
-        roster gap — `replicate` and `heygen_avatar` stay in
-        aspirational_tools because no installable connector for either
-        exists in this org's registry. Riverside (podcast prep/recording/
-        clipping) is installed at org level but not enabled in this chat —
-        a candidate worth Kaitlyn enabling given the podcast_production
-        domain, not yet usable.
+        Updated 2026-09-03: Descript is real and connected (verified via
+        get_drive_info) — the actual mechanism for video/audio editing and
+        podcast production (edit-by-transcript via Agent Underlord,
+        publish, transcript/timeline export), replacing the never-real
+        Replicate reference. heygen_hyperframes is real and connected
+        (verified via list_projects) but is motion graphics/kinetic
+        captions, not avatar video. Riverside is now real and connected —
+        Kaitlyn enabled it and it was verified via a real
+        platform_list_studios call — adding a large, genuine editing/
+        captioning/branding/export/social-publishing toolset (see
+        integrations.riverside.real_tools for the full inventory).
+        Riverside also surfaces a real "Create Your AI Twin" (BETA)
+        feature Kaitlyn found and screenshotted — "your own twin" (upload
+        a real recording of yourself) works today; "synthetic twin"
+        (photo/prompt) is Riverside's own "coming soon," not available.
+        That generation step is NOT exposed among Riverside's ~60 real
+        MCP tools — it's a web-dashboard-only action for Kaitlyn to do
+        herself; see integrations.riverside.ai_twin_feature for the
+        unresolved question of whether Land can at least upload the
+        source video into Riverside for her via media_create_media_upload.
+        Once a Twin video exists as a project asset, Land's real Riverside
+        editing/export/publish tools apply to it normally. True
+        avatar/presenter (talking-head) video generation itself remains a
+        genuine, unfilled roster gap through any *automatable* path —
+        `replicate` and `heygen_avatar` stay in aspirational_tools because
+        no installable connector for either exists in this org's registry.
 
     - id: analytics_reporting
       namesake: "Henderson"

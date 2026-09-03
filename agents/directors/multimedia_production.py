@@ -23,6 +23,23 @@ and a true HeyGen avatar-video connector are still aspirational — checked
 directly, neither has an installable connector in this org's registry.
 See config.yaml's `directors[multimedia_production].tools` (real) vs
 `aspirational_tools` (not real) — never claim either ran.
+
+Added 2026-09-03: Riverside, verified live via platform_list_studios
+(Kaitlyn's real studio). Real tools: extensive editing (fillers, pauses,
+smart mutes, captions, lower thirds, brand, stock media/music, color
+correction, cuts), media upload (create_media_upload -> upload bytes ->
+finalize_media_upload -> get_media), and real social publishing
+(social_upload_create). Riverside also has a real "Create Your AI Twin"
+(BETA) feature — Kaitlyn confirmed via screenshot: "your own twin" (from
+an uploaded recording of her, 2+ min) works today, "synthetic twin"
+(photo/prompt) is Riverside's own "coming soon". That generation step is
+NOT among Riverside's real MCP tools (no create_avatar/generate_twin
+tool) — a web-dashboard-only action for Kaitlyn. UNRESOLVED: whether
+media_create_media_upload also feeds that Twin pipeline vs. only the
+general media library — check that tool's schema or test with a real
+video before claiming either way. Once a Twin video exists as a project
+asset, Riverside's real editing/export/publish tools apply to it
+normally.
 """
 from agents.base_director import BaseDirector, DirectorOutput
 from agents.llm_provider import PaidTierRequiredError
@@ -49,7 +66,7 @@ class MultimediaProductionDirector(BaseDirector):
     # before every single call.
     GATED_TOOLS = {
         "google_vids", "veo", "elevenlabs", "descript", "heygen_hyperframes",
-        "replicate", "heygen_avatar",
+        "riverside", "replicate", "heygen_avatar",
     }
 
     system_prompt = (
@@ -57,20 +74,32 @@ class MultimediaProductionDirector(BaseDirector):
         "Institute. You cover AI video generation, avatar/presenter-style "
         "video, video and audio editing, and podcast production — not just "
         "captions and voiceover. As of 2026-09-03 (each verified directly, "
-        "not assumed), three real tools are connected: ElevenLabs "
+        "not assumed), four real tools are connected: ElevenLabs "
         "(creative_* tools cover image/video/speech, not just audio), "
         "Descript (real edit-by-transcript video/audio editing and "
         "podcast production — Agent Underlord does the actual editing; "
-        "call it that to the user), and HyperFrames by HeyGen (real, but "
+        "call it that to the user), HyperFrames by HeyGen (real, but "
         "motion graphics/kinetic captions, not avatar video — and its "
         "compose/render_video tools are disabled from a CLI-style session "
-        "like this one; only its read tools work here). Google Vids, Veo "
-        "3.1, Replicate, and a true HeyGen avatar-video connector are not "
-        "connected, and Replicate/avatar-HeyGen specifically have no "
-        "installable connector in this org's registry at all — treat "
-        "avatar/presenter video as a genuine, unfilled roster gap and say "
-        "so plainly, never implying one of these ran. For that gap, "
-        "produce precise production specs instead: a shot list/storyboard, "
+        "like this one; only its read tools work here), and Riverside "
+        "(real editing/captioning/branding/export tools plus real social "
+        "publishing). Riverside also exposes a real 'Create Your AI Twin' "
+        "(BETA) feature — 'your own twin' from an uploaded recording works "
+        "today, 'synthetic twin' from a photo/prompt is Riverside's own "
+        "'coming soon', not available. The Twin generation step itself is "
+        "not among Riverside's real tools (no create_avatar/generate_twin "
+        "tool exists) — it is a web-dashboard action the user must do "
+        "herself; whether uploading her video via media_create_media_upload "
+        "also feeds that pipeline is unresolved — verify before claiming "
+        "it does. Once a Twin video exists as a project asset, Riverside's "
+        "real editing/export/publish tools apply to it normally. Google "
+        "Vids, Veo 3.1, Replicate, and a true HeyGen avatar-video "
+        "connector are not connected, and Replicate/avatar-HeyGen "
+        "specifically have no installable connector in this org's "
+        "registry at all — treat automatable avatar/presenter video "
+        "generation as a genuine, unfilled roster gap and say so plainly, "
+        "never implying one of these ran. For that gap, produce precise "
+        "production specs instead: a shot list/storyboard, "
         "a voiceover or presenter script with timing marks, avatar/"
         "on-camera direction, and kinetic caption styling notes, for a "
         "human to run manually. With a connected tool, you may generate "

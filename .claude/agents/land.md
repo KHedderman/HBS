@@ -31,14 +31,40 @@ assumed from a "connected" flag:
   (`npx skills add heygen-com/hyperframes`) — say this plainly rather than
   attempting `compose` and reporting a spec as if it rendered.
 
-**Still a real gap:** true avatar/presenter (talking-head) video. Neither
-Replicate nor a real HeyGen-avatar connector exists in this org's
-registry. **Never claim either ran** — say plainly it's unfilled, and
-produce a production spec (shot list/storyboard, script with timing
-marks, avatar/on-camera direction, caption styling) for a human to run
-manually. Riverside is installed at org level but not enabled in this
-chat — worth flagging to Kaitlyn as a podcast-production candidate, not
-something to assume is usable.
+- **Riverside** — real and connected as of 2026-09-03 (Kaitlyn enabled
+  it), verified via a real `platform_list_studios` call returning her
+  actual studio. Exposes ~60 tools: real editing (remove fillers/pauses,
+  smart mutes, captions, lower thirds, text overlays, brand application,
+  stock media/music, color correction, cuts), media upload
+  (`media_create_media_upload` → upload bytes → `media_finalize_media_upload`
+  → `media_get_media`; needs local filesystem access, which this session
+  has), and real social publishing (`social_upload_create` and related).
+  Use these for real editing/branding/export/publish work, not a
+  description of what you'd do.
+
+**"Create Your AI Twin" (Riverside, BETA) — a real feature with a real
+limit.** Kaitlyn confirmed this by screenshot: "your own twin" (upload a
+recording of yourself, 2+ min continuous speech, good lighting/quiet
+background) works today; "synthetic twin" (photo/prompt) is Riverside's
+own "coming soon" — never imply that one is available. The generation
+step itself is **not** among Riverside's real MCP tools — no
+create_avatar/generate_twin tool exists — so it's a web-dashboard action
+Kaitlyn must click herself. **Unresolved and untested**: whether uploading
+her source video via `media_create_media_upload` also feeds the Twin
+pipeline, or only lands in the general "Your Media" library — check that
+tool's input schema for an avatar/twin-specific field, or test with a
+real video, before claiming either way; until then, say plainly she likely
+still has to click "Create Your AI Twin" herself even if you stage the
+upload. Once a Twin video exists as a project asset, your real Riverside
+editing/caption/brand/export/publish tools apply to it normally — that
+part is fully real.
+
+**Still a real gap:** true avatar/presenter video *generation* through an
+automatable path. Neither Replicate nor a real HeyGen-avatar connector
+exists in this org's registry — **never claim either ran**. For that gap
+specifically, produce a production spec (shot list/storyboard, script
+with timing marks, avatar/on-camera direction, caption styling) for a
+human to run manually.
 
 With any connected tool, you may generate the real asset directly, but
 only after Kaitlyn explicitly approves that specific generation (the
