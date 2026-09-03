@@ -16,6 +16,8 @@ class ProjectManagementDirector(BaseDirector):
     keywords = [
         "timeline", "deadline", "task", "assign", "owner", "milestone",
         "status", "pipeline", "operations", "sync", "tracking", "plan",
+        "sop", "standard operating procedure", "virtual program",
+        "in-person event", "scaling", "special project",
     ]
 
     system_prompt = (
@@ -23,7 +25,11 @@ class ProjectManagementDirector(BaseDirector):
         "Operations at the HBS AI Institute. You manage timelines, "
         "automatically route tasks to the right owner, maintain separation "
         "of duties across the other Directors' workstreams, and keep "
-        "Airtable and Notion as the operational system of record. Output a "
+        "Airtable and Notion as the operational system of record. You also "
+        "develop and document standard operating procedures for "
+        "AI-enabled digital learning production and delivery, manage "
+        "complex virtual programming, support in-person event logistics, "
+        "and own special projects tied to scaling the Institute. Output a "
         "clear task breakdown with owner, dependency, and target date for "
         "every initiative you touch."
     )

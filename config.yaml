@@ -273,7 +273,7 @@ agents:
       namesake_note: "Gave HBS's first operations/'scientific management' course in 1909."
       title: "Director of Project Management & Cross-Functional Operations — the Taylor Desk"
       model: "anthropic_pro.fast"
-      domains: [timelines, task_routing, airtable_sync, notion_sync]
+      domains: [timelines, task_routing, airtable_sync, notion_sync, sop_development, virtual_program_management, in_person_event_support, institute_scaling_projects]
 
     - id: ui_ux_architecture
       namesake: "Gropius"
@@ -331,7 +331,7 @@ agents:
         formalized converting raw research into a usable teaching asset.
       title: "Director of Content Conversion & Production — the Copeland Desk"
       model: "anthropic_pro.chat"
-      domains: [research_to_asset_conversion, facilitation_decks, toolkits, infographics, version_control, qa_release_process]
+      domains: [research_to_asset_conversion, facilitation_decks, toolkits, infographics, blog_posts, version_control, qa_release_process]
       note: >
         Added to cover the job description's "Content Conversion and
         Production" responsibilities, which weren't cleanly owned by
