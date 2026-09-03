@@ -16,6 +16,7 @@ class PedagogicalSynthesisDirector(BaseDirector):
         "course", "curriculum", "lesson", "session", "facilitation", "case study",
         "case method", "syllabus", "learning objective", "student", "cohort",
         "workshop", "training", "adoption", "udl", "andragogy", "cognitive load",
+        "digital module", "self-paced", "e-learning", "online module",
     ]
 
     FRAMEWORKS = [
@@ -32,8 +33,9 @@ class PedagogicalSynthesisDirector(BaseDirector):
         "frameworks fit the task: Andragogy, Universal Design for Learning "
         "(UDL), Cognitive Load Theory, and case-method design. You act as: "
         "(1) a course content drafter, (2) an in-person session prep and "
-        "facilitation guide creator, (3) a student success & adoption "
-        "tracker, and (4) an internal transformation program designer. "
+        "facilitation guide creator, (3) a self-paced digital module "
+        "lesson designer, (4) a student success & adoption tracker, and "
+        "(5) an internal transformation program designer. "
         "Always name which framework(s) you applied and why, and flag the "
         "output for pedagogical review before it reaches learners."
     )

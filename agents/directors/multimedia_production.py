@@ -15,10 +15,13 @@ Two execution paths, both governed by the same gate:
     as pre-approved.
 
 Real video generation/editing runs through Replicate (open-source
-video/image/audio models); real voice/transcription runs through
-ElevenLabs. Captioning a video is a two-step chain: ElevenLabs transcribes
-the audio into timed text, then Replicate burns those captions into the
-video — see config.yaml's `directors[multimedia_production].tools`.
+video/image/audio models); real avatar/presenter-style video runs through
+HeyGen — a much closer fit for executive-education training content than
+raw model hosting; real voice, podcast-ready audio editing, and
+transcription run through ElevenLabs. Captioning a video is a two-step
+chain: ElevenLabs transcribes the audio into timed text, then Replicate
+burns those captions into the video — see config.yaml's
+`directors[multimedia_production].tools`.
 """
 from agents.base_director import BaseDirector, DirectorOutput
 from agents.llm_provider import PaidTierRequiredError
@@ -32,7 +35,8 @@ class MultimediaProductionDirector(BaseDirector):
 
     keywords = [
         "video", "audio", "avatar", "caption", "voiceover", "veo",
-        "elevenlabs", "replicate", "descript", "google vids", "multimedia",
+        "elevenlabs", "replicate", "heygen", "descript", "google vids",
+        "multimedia", "podcast", "presenter", "video editing", "audio editing",
     ]
 
     # These tools are quota-limited or paid beyond a free tier — see
@@ -41,24 +45,27 @@ class MultimediaProductionDirector(BaseDirector):
     # "connected" means a live call is *possible*, not pre-approved — this
     # Director (and Claude, when embodying it interactively) still asks
     # before every single call.
-    GATED_TOOLS = {"google_vids", "veo", "elevenlabs", "replicate", "descript"}
+    GATED_TOOLS = {"google_vids", "veo", "elevenlabs", "replicate", "heygen", "descript"}
 
     system_prompt = (
         "You are the Director of Multimedia Production at the HBS AI "
-        "Institute. You orchestrate Google Vids, Veo 3.1, ElevenLabs, "
-        "Replicate, and Descript by producing precise production specs: a "
-        "shot list/storyboard, a voiceover script with timing marks, "
-        "avatar/on-camera direction, and kinetic caption styling notes. In "
-        "the standalone script you never call these tools directly — you "
-        "produce the spec a human runs manually. In an interactive chat "
-        "session with a connector connected (ElevenLabs for voice/"
-        "transcription, Replicate for real video generation/editing), you "
-        "may generate the real asset directly, but only after the user "
-        "explicitly approves that specific generation — never assume prior "
-        "approval carries forward. For captioning a video specifically: "
-        "chain the two tools — ElevenLabs transcribes the audio into timed "
-        "text, then Replicate burns those captions into the video — rather "
-        "than returning a bare transcript."
+        "Institute. You cover AI video generation, avatar/presenter-style "
+        "video, video and audio editing, and podcast production — not just "
+        "captions and voiceover. You orchestrate Google Vids, Veo 3.1, "
+        "HeyGen, ElevenLabs, Replicate, and Descript by producing precise "
+        "production specs: a shot list/storyboard, a voiceover or presenter "
+        "script with timing marks, avatar/on-camera direction, and kinetic "
+        "caption styling notes. In the standalone script you never call "
+        "these tools directly — you produce the spec a human runs manually. "
+        "In an interactive chat session with a connector connected "
+        "(ElevenLabs for voice/podcast audio/transcription, Replicate for "
+        "real video generation/editing, HeyGen for real avatar/presenter "
+        "video), you may generate the real asset directly, but only after "
+        "the user explicitly approves that specific generation — never "
+        "assume prior approval carries forward. For captioning a video "
+        "specifically: chain the two tools — ElevenLabs transcribes the "
+        "audio into timed text, then Replicate burns those captions into "
+        "the video — rather than returning a bare transcript."
     )
 
     def request_tool_execution(self, tool: str, hitl_gate) -> str:

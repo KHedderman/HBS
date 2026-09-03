@@ -154,7 +154,7 @@ everything into a single unified response.
 Every hub-and-spoke role carries a real Harvard namesake alongside its
 functional title — chosen to fit the role, never merely decorative, and
 never a contested or living figure. The two hub roles take **University**-wide
-figures (they coordinate across everything below them); the ten Directors
+figures (they coordinate across everything below them); the eleven Directors
 take **HBS**-specific figures (each owns one bounded domain). See
 `config.yaml`'s `naming_convention` for the full rationale.
 
@@ -182,20 +182,21 @@ take **HBS**-specific figures (each owns one bounded domain). See
 
 ---
 
-## 3. The Spokes — 10 Specialized Directors
+## 3. The Spokes — 11 Specialized Directors
 
 | # | Director | Namesake | Primary model (free-tier) | Domain |
 |---|---|---|---|---|
-| 1 | AI Market & Executive Intelligence — *the Doriot Desk* | Georges Doriot, HBS professor, founded the first modern VC firm (ARDC) | Perplexity `sonar-reasoning` | Product/market tracking, workforce transformation, executive briefings |
-| 2 | Pedagogical Synthesis & Instructional Design — *the Donham Desk* | Wallace B. Donham, HBS's second dean, institutionalized the case method | Google AI Studio `gemini-2.5-pro` | Andragogy, UDL, Cognitive Load Theory, case-method design, course drafting |
+| 1 | AI Market & Executive Intelligence — *the Doriot Desk* | Georges Doriot, HBS professor, founded the first modern VC firm (ARDC) | Perplexity `sonar-reasoning` | New AI products/capabilities, business & industry impact for executives, Harvard & academic AI research — not competitive intelligence |
+| 2 | Pedagogical Synthesis & Instructional Design — *the Donham Desk* | Wallace B. Donham, HBS's second dean, institutionalized the case method | Google AI Studio `gemini-2.5-pro` | Andragogy, UDL, Cognitive Load Theory, case-method design, course drafting, digital module lessons |
 | 3 | AI Product Management & Development — *the Aiken Desk* | Howard Aiken, Harvard professor, built the Harvard Mark I | Claude `claude-opus-5` | Feature ideation, PRDs, architecture, QA review, GitHub PR sync |
 | 4 | Project Management & Cross-Functional Ops — *the Taylor Desk* | Frederick Winslow Taylor, gave HBS's first operations course (1909) | Claude `claude-haiku-4-5` | Timelines, task routing, Airtable/Notion sync |
-| 5 | Interactive UI/UX Architecture — *the Gropius Desk* | Walter Gropius, Harvard GSD, Bauhaus founder | Claude `claude-sonnet-5` | Wireframes, component specs, Lovable handoff |
+| 5 | Interactive UI/UX Architecture — *the Gropius Desk* | Walter Gropius, Harvard GSD, Bauhaus founder | Claude `claude-sonnet-5` | Wireframes, component specs |
 | 6 | Growth & Omnichannel Content — *the Levitt Desk* | Theodore Levitt, HBS marketing professor, "Marketing Myopia" | Claude `claude-sonnet-5` | LinkedIn/newsletter/Instagram, content recycling, growth strategy |
-| 7 | Multimedia Production — *the Land Desk* | Edwin Land, attended Harvard, founded Polaroid | Claude `claude-sonnet-5` (orchestration + real video/audio via ElevenLabs, Replicate) | Video generation/editing, voice, avatars, kinetic captions |
+| 7 | Multimedia Production — *the Land Desk* | Edwin Land, attended Harvard, founded Polaroid | Claude `claude-sonnet-5` (orchestration + real video/audio via ElevenLabs, Replicate, HeyGen) | AI video generation, avatar/presenter video, video & audio editing, podcast production, voiceover, kinetic captions |
 | 8 | Analytics & Leadership Reporting — *the Henderson Desk* | Bruce Henderson, HBS MBA, founded BCG | Claude `claude-opus-5` | Feedback/telemetry analysis, iteration suggestions, leadership reports |
 | 9 | Accessibility & Compliance | *(intentionally unnamed — see below)* | Claude `claude-haiku-4-5` | UDL/WCAG audit, reading level, cognitive load — the last gate before publish |
 | 10 | Content Conversion & Production — *the Copeland Desk* | Melvin T. Copeland, wrote HBS's first course-method case (1921) | Claude `claude-sonnet-5` | Converting research into decks/toolkits/infographics/blog posts, version control, QA & release |
+| 11 | Innovation & Continuous Improvement — *the Christensen Desk* | Clayton Christensen, HBS professor, author of *The Innovator's Dilemma* | Claude `claude-opus-5` | The workforce itself, not a task for an external audience — new AI tool/connector recommendations, refinements to other Directors, coaching Kaitlyn's own practice, adoption material for colleagues — People, Process, and Product |
 
 Accessibility & Compliance carries no namesake on purpose: UDL/WCAG are
 modern frameworks with no real Harvard figure behind them, and forcing one
@@ -206,6 +207,11 @@ clear the job's "Content Conversion and Production" responsibilities —
 turning faculty/SME research into released, multi-format, version-controlled
 assets — weren't cleanly owned by Donham (pedagogical frameworks), Levitt
 (external growth marketing), or Land (video/audio).
+
+The Christensen Desk (#11) is different in kind from the other ten: its
+subject is the workforce itself and how Kaitlyn works with it, not a task
+deliverable for an external audience — the meta-layer that watches usage
+patterns, scouts new tools, and proposes refinements to everything above it.
 
 Each Director lives in `agents/directors/`, subclasses `BaseDirector`
 (`agents/base_director.py`), and declares:
