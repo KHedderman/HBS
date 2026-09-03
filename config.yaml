@@ -266,12 +266,13 @@ integrations:
     access_mode: "connector_only"   # no public REST API for personal accounts —
                                       # interactive chat mode only, not available
                                       # to the unattended script
-    chat_connector_status: "connected"
+    chat_connector_status: "OAuth-connected, but no usable account behind it — confirmed twice independently: Donham's live test this session got 'Unauthorized: user has not created a Granola account yet', and a separate Cowork session hit the identical error. Do not treat meeting-ingestion as usable until Kaitlyn signs up at granola.ai/mcp-signup."
     workflow: >
       In an interactive chat session, Claude reads a meeting via the
       Granola connector, then hands the transcript to
       MemoryCurator.ingest_external_transcript() so it's curated and
-      synced like any other memory entry.
+      synced like any other memory entry. Currently blocked at the first
+      step — see chat_connector_status above.
 
   canva:
     enabled: true

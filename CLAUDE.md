@@ -71,20 +71,48 @@ aspirational one.
 
 **The trigger is being addressed as "Eliot," or being asked to act as the
 KH HBS Agentic Workforce / the multi-agent system.** The moment that
-happens, **dispatch the request to the real `eliot` subagent via the
-Agent tool (`subagent_type: "eliot"`) rather than self-embodying the
-persona directly in this conversation.** `eliot.md` declares `model:
-opus` — dispatching for real is the only way that's actually true; a
-session that just follows these instructions in place runs Eliot's
-reasoning on whatever model the outer conversation happens to be, which
-defeats the entire point of per-role model routing at the one layer
-(Chief-of-Staff-level classification and synthesis) that matters most.
-Pass Kaitlyn's request and any needed context in the dispatch, relay the
-subagent's response back to her, and repeat this dispatch for every
-Eliot-triggered exchange in the conversation — not just the first one.
-The dispatched `eliot` subagent still does everything below (classify,
-dispatch to Directors, enforce HITL, synthesize) — this changes *how* the
-top-level reasoning happens, not what it does:
+happens, dispatch for real rather than self-embodying the persona in
+place — but *how* that dispatch works depends on which environment this
+session is actually running in, confirmed by two different real
+sessions, not assumed to be identical everywhere:
+
+- **Local Claude Code** (this file's original assumption, still verified
+  true here): `.claude/agents/*.md` files register as real named
+  `subagent_type`s. Dispatch the request to the real `eliot` subagent via
+  the Agent tool (`subagent_type: "eliot"`) — `eliot.md` declares `model:
+  opus`, and dispatching for real is the only way that's actually true.
+- **Claude Cowork**: confirmed by direct test (`Agent type 'eliot' not
+  found`) that Cowork does **not** auto-register `.claude/agents/*.md`
+  files as named subagent types. There, Eliot is this live conversation
+  itself, per `config.yaml`'s `embodiment` field — don't attempt a named
+  `eliot` dispatch, it will fail. For Director-level dispatch in Cowork:
+  try the named `subagent_type` first: if the environment rejects it,
+  fall back to a `general-purpose` agent given that Director's exact
+  persona text (from its `.claude/agents/<name>.md` body) plus an
+  explicit `model` parameter matching its declared model — confirmed by a
+  real Cowork session to still produce genuine per-role model routing
+  (distinct models and durations observed across dispatches), just
+  through a different mechanism than named-type dispatch.
+- **Unknown/new environment**: try the named `subagent_type` dispatch
+  first regardless of platform. If it fails with an "agent type not
+  found"-style error, that's your signal to use the general-purpose +
+  persona + explicit model fallback above, and to say plainly which path
+  this environment actually needed — don't assume either mechanism works
+  without testing it in a session that hasn't proven it yet.
+
+Whichever mechanism actually works, pass Kaitlyn's request and any needed
+context in the dispatch, relay the response back to her, and repeat this
+dispatch for every Eliot-triggered exchange in the conversation — not
+just the first one. Directors still do everything below (classify,
+dispatch further, enforce HITL, synthesize) regardless of which
+mechanism reached them — this changes *how* dispatch happens, not what it does.
+
+**On git push, in any environment:** if a push is denied with something
+like "repo is not in this session's authorized repository set," that is
+a session/environment permission outside anything a file change can fix
+— commit locally, say so plainly, and stop. Do not keep retrying the same
+push expecting a different result; a second identical denial confirms
+the first, it doesn't need re-confirming a third time.
 
 1. Classify the request against the Directors' declared domains (see
    `config.yaml`'s `agents.directors`, and each `agents/directors/*.py`
