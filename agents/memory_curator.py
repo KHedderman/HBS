@@ -1,4 +1,5 @@
-"""Winsor — the Memory Curator, persistent context engine (Core Pillar).
+"""Winsor — the Memory Curator, persistent context AND governance/reporting
+engine (Core Pillar).
 
 Namesake: Justin Winsor, Harvard's University Librarian (1877-1897) and a
 founding figure of American librarianship, who built the systems for
@@ -11,10 +12,22 @@ decision consults `recall()` first, and every completed exchange is handed
 to `remember()`, which curates it into structured long-term storage and
 syncs it out to GitHub and Notion.
 
+Winsor's charter is deliberately broader than passive logging — paperwork,
+notes, governance, AND reporting, not just storage. (This mirrors a pattern
+AI advisor Allie K. Miller describes in her own hub-and-spoke agent system:
+a Chief of Staff paired with an assistant who owns governance and reporting,
+since orchestration plus documentation — not agent count — is what actually
+makes a multi-agent system work.) Concretely, that means Winsor also reads
+back across the HITL decision log and produces a standing `governance_digest()`
+— what's pending, what's been approved or denied, and what needs follow-up —
+rather than leaving that record purely as an unread audit trail.
+
 Storage layout:
     memory/session_logs/<date>.jsonl   — raw, timestamped turn-by-turn log
     memory/long_term/knowledge_base.jsonl — curated, deduplicated entries
                                              (what recall() searches)
+    qa_logs/hitl_decision_log.jsonl    — HITLGate's raw approval/denial log
+                                          (what governance_digest() reads)
 """
 from __future__ import annotations
 
@@ -23,6 +36,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from agents.config_loader import load_config
 from database_sync import github_sync, notion_sync
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -37,6 +51,8 @@ class MemoryCurator:
         SESSION_LOG_DIR.mkdir(parents=True, exist_ok=True)
         LONG_TERM_PATH.parent.mkdir(parents=True, exist_ok=True)
         LONG_TERM_PATH.touch(exist_ok=True)
+        cfg = load_config()
+        self.hitl_log_path = REPO_ROOT / cfg["logging"]["hitl_decision_log"]
 
     # -- write path -----------------------------------------------------
     def remember(
@@ -104,6 +120,77 @@ class MemoryCurator:
     def _title_for(request: str) -> str:
         one_line = " ".join(request.strip().split())
         return one_line[:80] + ("…" if len(one_line) > 80 else "")
+
+    # -- governance & reporting --------------------------------------------
+    def governance_digest(self, recent_limit: int = 5) -> str:
+        """Winsor's standing report: reads HITLGate's raw decision log and
+        the curated memory store, and turns them into one readable digest —
+        pending/approved/denied checkpoint counts, the most recent decisions,
+        and the most recent activity. This is the "documentation is the
+        actual unlock" piece: a synthesized report, not just an audit trail
+        nobody re-reads.
+        """
+        decisions: list[dict[str, Any]] = []
+        if self.hitl_log_path.exists():
+            with open(self.hitl_log_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if line:
+                        decisions.append(json.loads(line))
+
+        approved = [d for d in decisions if d.get("approved") is True]
+        denied = [d for d in decisions if d.get("approved") is False]
+        cost_flags = [d for d in decisions if d.get("checkpoint") == "cost_bearing_action"]
+
+        recent_activity: list[dict[str, Any]] = []
+        if LONG_TERM_PATH.exists():
+            with open(LONG_TERM_PATH, "r", encoding="utf-8") as f:
+                recent_activity = [json.loads(line) for line in f if line.strip()]
+        recent_activity = recent_activity[-recent_limit:]
+
+        lines = [
+            f"# Governance Digest — {dt.date.today().isoformat()}",
+            "",
+            "## HITL checkpoints",
+            f"- Approved: {len(approved)}",
+            f"- Denied (fail-safe or explicit): {len(denied)}",
+            f"- Cost-bearing flags raised: {len(cost_flags)}",
+        ]
+        if decisions:
+            lines.append("")
+            lines.append("### Most recent decisions")
+            for d in decisions[-recent_limit:][::-1]:
+                status = "✅ approved" if d.get("approved") else "⛔ denied"
+                lines.append(f"- [{d.get('timestamp', '?')}] {d.get('checkpoint', '?')} — {status}")
+        else:
+            lines.append("- No HITL checkpoints logged yet.")
+
+        lines.append("")
+        lines.append("## Recent activity")
+        if recent_activity:
+            for r in reversed(recent_activity):
+                lines.append(
+                    f"- [{r['timestamp']}] {r['request'][:100]} "
+                    f"(directors: {', '.join(r.get('directors_invoked', [])) or 'none'})"
+                )
+        else:
+            lines.append("- No activity recorded yet.")
+
+        return "\n".join(lines)
+
+    def publish_governance_digest(self) -> dict:
+        """Winsor's reporting duty made concrete: pushes the current digest
+        out to Notion as a real page, the same free-tier sync path
+        `remember()` already uses — so governance reporting is an actual
+        artifact stakeholders can read, not just something the workforce
+        could theoretically generate.
+        """
+        digest = self.governance_digest()
+        return notion_sync.log_memory_entry(
+            title=f"Governance Digest — {dt.date.today().isoformat()}",
+            summary=digest,
+            tags=["governance_digest"],
+        )
 
     # -- read path --------------------------------------------------------
     def recall(self, query: str, limit: int = 5) -> str:

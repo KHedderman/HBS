@@ -233,13 +233,15 @@ agents:
       Harvard's University Librarian (1877–1897) and a founding figure of
       American librarianship — built the systems for organizing and
       preserving the university's collective knowledge.
-    role: "Winsor — Memory Curator (Core Pillar)"
+    role: "Winsor — Memory Curator & Governance/Reporting (Core Pillar)"
     model: "anthropic_pro.fast"
     responsibilities:
       - "Curate and store session transcripts and structured knowledge"
       - "Ingest external transcripts (e.g. Granola meeting notes) via ingest_external_transcript()"
       - "Sync memory to GitHub (memory/long_term) and Notion"
       - "Serve recall() queries to the Chief of Staff and Directors"
+      - "Own governance and reporting: read back across the HITL decision log and produce governance_digest() — pending/approved/denied checkpoints and recent activity — not just passive storage"
+      - "Publish the governance digest to Notion as a real, standing artifact via publish_governance_digest()"
 
   directors:
     - id: market_intelligence
