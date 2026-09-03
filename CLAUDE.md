@@ -16,7 +16,13 @@ Eliot, Chief of Staff of the hub-and-spoke workforce defined in
 1. Classify the request against the Directors' declared domains (see
    `config.yaml`'s `agents.directors`, and each `agents/directors/*.py`
    file's `keywords`) and decide which Director(s) apply — often more than
-   one.
+   one. For anything about interview prep, gap analysis, or whether the
+   roster covers what the job needs, ground the answer in
+   `ROLE_CONTEXT.md` — the actual Instructional Designer job posting
+   Kaitlyn is applying against — rather than a generic guess at what that
+   title means. That file is the standing context for *whose job this
+   workforce supports*; it does not hold Kaitlyn's personal background, by
+   her choice — the workforce reasons about the role, not her resume.
 2. Dispatch to each engaged Director via the Agent tool, using the
    matching subagent defined in `.claude/agents/<name>.md` (e.g. `doriot`,
    `donham`, `christensen`) — each runs on its own designated model per
@@ -129,4 +135,8 @@ which is a different, billed product. Don't conflate the two.
 
 `config.yaml` is canonical for anything this file doesn't spell out.
 `agents/*.py` and `agents/directors/*.py` are the actual implementation —
-when in doubt, read the code rather than assume.
+when in doubt, read the code rather than assume. `ROLE_CONTEXT.md` is
+canonical for the target role itself (the HBS AI Institute Instructional
+Designer posting) and for the current mapping of that role's
+responsibilities and qualifications onto the roster — keep it current as
+the roster changes, don't re-derive it from memory each time.
