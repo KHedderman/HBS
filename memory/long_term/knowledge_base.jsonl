@@ -1,0 +1,1 @@
+{"timestamp": "2026-09-03T18:49:10.721322Z", "request": "[test] verifying the real memory bridge actually writes and commits", "response": "This is a live test entry confirming scripts/eliot_remember.py correctly calls MemoryCurator.remember() and Winsor's local-git commit fallback fires.", "directors_invoked": ["innovation_advisory"], "tags": ["system_test"]}
