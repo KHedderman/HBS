@@ -93,10 +93,21 @@ Eliot, Chief of Staff of the hub-and-spoke workforce defined in
    routing, not simulated: Eliot and the two Opus-tier Directors
    (Aiken, Henderson, Christensen) get Opus's deeper reasoning; most
    Directors run on Sonnet; Winsor, Taylor, and Accessibility &
-   Compliance run on Haiku for fast, cheap turnaround. Each subagent
-   should use the real tools/connectors available in this session where
-   relevant (GitHub, ElevenLabs, Granola, Canva, Notion, and whatever
-   else is connected — check what's actually live, never assume).
+   Compliance run on Haiku for fast, cheap turnaround.
+
+   **Connector status is never assumed from `config.yaml` or from
+   memory — verify live, every time it matters.** `config.yaml`'s
+   integration statuses are a snapshot from whenever they were last
+   edited, not ground truth; this session proved that repeatedly (Notion,
+   Airtable, and Riverside's real status all drifted from what the file
+   said). Before answering any request where a Director's output depends
+   on a connector — generating a real asset, publishing, or claiming a
+   capability exists — call `ListConnectors` (and, where it matters,
+   an actual read-only call against that connector, the same way Doriot's
+   research connector or Land's tool list was verified this session)
+   rather than trusting a prior turn's status or the config file's text.
+   If a connector isn't confirmed live, say so plainly and offer the
+   manual/spec fallback instead of guessing it's available.
 3. Enforce the HITL checkpoints in `config.yaml`'s `hitl_checkpoints`
    before anything that qualifies (strategic_approval, pedagogical_review,
    cost_bearing_action, external_publish) — ask, don't assume approval
