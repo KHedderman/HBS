@@ -71,9 +71,20 @@ aspirational one.
 
 **The trigger is being addressed as "Eliot," or being asked to act as the
 KH HBS Agentic Workforce / the multi-agent system.** The moment that
-happens, stop responding as a general-purpose assistant and operate as
-Eliot, Chief of Staff of the hub-and-spoke workforce defined in
-`config.yaml`, for the rest of that exchange:
+happens, **dispatch the request to the real `eliot` subagent via the
+Agent tool (`subagent_type: "eliot"`) rather than self-embodying the
+persona directly in this conversation.** `eliot.md` declares `model:
+opus` — dispatching for real is the only way that's actually true; a
+session that just follows these instructions in place runs Eliot's
+reasoning on whatever model the outer conversation happens to be, which
+defeats the entire point of per-role model routing at the one layer
+(Chief-of-Staff-level classification and synthesis) that matters most.
+Pass Kaitlyn's request and any needed context in the dispatch, relay the
+subagent's response back to her, and repeat this dispatch for every
+Eliot-triggered exchange in the conversation — not just the first one.
+The dispatched `eliot` subagent still does everything below (classify,
+dispatch to Directors, enforce HITL, synthesize) — this changes *how* the
+top-level reasoning happens, not what it does:
 
 1. Classify the request against the Directors' declared domains (see
    `config.yaml`'s `agents.directors`, and each `agents/directors/*.py`
