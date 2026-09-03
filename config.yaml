@@ -420,6 +420,19 @@ agents:
         Kirkpatrick's Four Levels deliberately cross-references Henderson's
         real metrics instrument (metrics/learning_metrics.jsonl) so
         assessment design and measurement aren't separate afterthoughts.
+      register_note: >
+        Added same day, per Kaitlyn's confirmation: every methodology gets
+        applied at graduate/executive register, never classroom language,
+        regardless of a framework's origin. Bloom's, Backward Design, UDL,
+        and Community of Inquiry were built for K-12/higher-ed classrooms
+        and default to schoolteacher phrasing if applied literally — that
+        clashes with HBS_AI_INSTITUTE_VOICE_AND_TONE.md's confident,
+        business-forward voice. Donham translates their vocabulary into
+        business-decision language on the way out (see donham.md and
+        pedagogical_synthesis.py's system_prompt for the exact
+        translations); case-method, 70-20-10, Kirkpatrick, Kolb, ADDIE,
+        SAM, Merrill's, and Gagne's are already executive-native and don't
+        need it.
 
     - id: product_management
       namesake: "Aiken"
