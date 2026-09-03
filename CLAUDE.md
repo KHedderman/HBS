@@ -101,9 +101,9 @@ top-level reasoning happens, not what it does:
    `donham`, `christensen`) — each runs on its own designated model per
    that file's frontmatter (see the table below), not whatever model this
    conversation itself is running on. This is real per-role model
-   routing, not simulated: Eliot and the two Opus-tier Directors
-   (Aiken, Henderson, Christensen) get Opus's deeper reasoning; most
-   Directors run on Sonnet; Winsor, Taylor, and Accessibility &
+   routing, not simulated: Eliot and the four Opus-tier Directors
+   (Aiken, Henderson, Christensen, Argyris) get Opus's deeper reasoning;
+   most Directors run on Sonnet; Winsor, Taylor, and Accessibility &
    Compliance run on Haiku for fast, cheap turnaround.
 
    **Connector status is never assumed from `config.yaml` or from
@@ -153,6 +153,7 @@ behavior from memory.
 | Accessibility & Compliance | `accessibility-compliance.md` | haiku |
 | Copeland | `copeland.md` | sonnet |
 | Christensen | `christensen.md` | opus |
+| Argyris | `argyris.md` | opus |
 
 **Hub:**
 - **Eliot** — Chief of Staff & Router. Sole point of contact; classifies,
@@ -162,20 +163,21 @@ behavior from memory.
   standing report of what's pending/approved/denied and recent activity —
   via `agents/memory_curator.py`. Runs alongside Eliot, not beneath him.
 
-**Directors (11):**
+**Directors (12):**
 | id | namesake | covers |
 |---|---|---|
 | `market_intelligence` | Doriot | New AI products/capabilities, business & industry impact for executives, Harvard & academic AI research — **not** competitive intelligence |
-| `pedagogical_synthesis` | Donham | Syllabi, session plans, facilitation guides, **digital module lessons**, case-method design |
-| `product_management` | Aiken | Feature ideation, PRDs, technical architecture, QA — for this workforce's own tooling |
-| `project_management` | Taylor | Timelines, SOPs, virtual program management, in-person event support |
-| `ui_ux_architecture` | Gropius | Wireframes, component specs |
+| `pedagogical_synthesis` | Donham | Full instructional-design methodology toolkit (ADDIE, SAM, Gagné, Bloom's, Kirkpatrick, Kolb, and more), calibrated to graduate/executive register, across any delivery medium and a two-axis proficiency model (AI fluency × organizational altitude) |
+| `product_management` | Aiken | Feature ideation, PRDs, technical architecture (real backend via Supabase), QA — for this workforce's own tooling |
+| `project_management` | Taylor | Timelines, SOPs, virtual program management, in-person event support (real board tracking via monday.com) |
+| `ui_ux_architecture` | Gropius | Wireframes, component specs, interactive prototypes (real designs via Figma — seat currently view-only) |
 | `growth_content` | Levitt | LinkedIn, newsletters, content recycling, growth strategy |
-| `multimedia_production` | Land | **AI video generation, avatar/presenter video (HeyGen), video & audio editing, podcast production**, voiceover, captions |
+| `multimedia_production` | Land | AI video/audio generation and editing (ElevenLabs, Descript, Riverside), podcast production, kinetic captions/motion graphics (HyperFrames by HeyGen) — talking-avatar presenter video generation is still a genuine, unfilled gap |
 | `analytics_reporting` | Henderson (Bruce Henderson, BCG founder — not to be confused with Lawrence Henderson) | Learning performance, engagement, leadership-ready summaries |
 | `accessibility_compliance` | *(none, deliberate)* | WCAG/UDL audits, reading level, cognitive load |
-| `content_production` | Copeland | Converts research into decks, toolkits, infographics, blog posts; version control & QA |
+| `content_production` | Copeland | Converts research into decks, toolkits, infographics, blog posts (real assets via Canva, Gamma); version control via `outputs/` & QA |
 | `innovation_advisory` | Christensen | **The workforce itself, not a task for an external audience** — recommends new AI tools/connectors, refinements to other Directors, coaches Kaitlyn's own practice, and produces adoption material for colleagues building their own agentic workforce. Covers People, Process, and Product. |
+| `performance_coaching` | Argyris | **How Kaitlyn performs in her actual job, not the workforce itself** — prioritization, meeting prep, energy management, and double-loop reflection on recurring work patterns, from what she directly tells it (no calendar/email access). |
 
 ## Claude Artifacts
 
@@ -209,7 +211,8 @@ Eliot, includes:
 ## Anthropic models — no separate charge
 
 Every Director's underlying reasoning runs on Claude (Sonnet 5 for most
-work, Opus 5 for the hardest synthesis — Eliot and Christensen — Haiku 4.5
+work, Opus 5 for the hardest synthesis — Eliot, Aiken, Henderson,
+Christensen, and Argyris — Haiku 4.5
 for fast summarization like Winsor's digests) via Kaitlyn's Claude
 Pro/Claude Code access. This is included in the subscription already paid
 for, not a separate metered cost — unlike the Anthropic Developer API,

@@ -91,6 +91,9 @@ flowchart TB
     COS -->|"parallel dispatch"| D7
     COS -->|"parallel dispatch"| D8
     COS -->|"parallel dispatch"| D9
+    COS -->|"parallel dispatch"| D10
+    COS -->|"parallel dispatch"| D11
+    COS -->|"parallel dispatch"| D12
 
     D1["📈 Market &<br/>Executive Intelligence"] -.->|"output ONLY<br/>back to hub"| COS
     D2["🎓 Pedagogical Synthesis<br/>& Instructional Design"] -.-> COS
@@ -101,6 +104,9 @@ flowchart TB
     D7["🎬 Multimedia<br/>Production"] -.-> COS
     D8["📊 Analytics &<br/>Leadership Reporting"] -.-> COS
     D9["♿ Accessibility &<br/>Compliance"] -.-> COS
+    D10["📄 Content Conversion<br/>& Production"] -.-> COS
+    D11["💡 Innovation &<br/>Continuous Improvement"] -.-> COS
+    D12["🧭 Personal Effectiveness<br/>& Performance Coaching"] -.-> COS
 
     MC <-->|"sync"| GH[("GitHub")]
     MC <-->|"sync"| NO[("Notion")]
@@ -138,7 +144,8 @@ flowchart TB
         │ Market  ││Pedagog. ││ Product ││ Project │  │ GitHub ││ Notion │
         │ Intel   ││Synthesis││   Mgmt  ││   Mgmt  │  └────────┘└────────┘
         └────┬────┘└────┬────┘└────┬────┘└────┬────┘
-              (+ UI/UX, Growth, Multimedia, Analytics, Accessibility — 9 total)
+              (+ UI/UX, Growth, Multimedia, Analytics, Accessibility, Content
+                 Production, Innovation, Performance Coaching — 12 total)
               │          │          │          │
               └──────────┴────┬─────┴──────────┘
                     outputs return ONLY to the Chief of Staff
@@ -162,7 +169,7 @@ everything into a single unified response.
 Every hub-and-spoke role carries a real Harvard namesake alongside its
 functional title — chosen to fit the role, never merely decorative, and
 never a contested or living figure. The two hub roles take **University**-wide
-figures (they coordinate across everything below them); the eleven Directors
+figures (they coordinate across everything below them); the twelve Directors
 take **HBS**-specific figures (each owns one bounded domain). See
 `config.yaml`'s `naming_convention` for the full rationale.
 
@@ -190,7 +197,7 @@ take **HBS**-specific figures (each owns one bounded domain). See
 
 ---
 
-## 3. The Spokes — 11 Specialized Directors
+## 3. The Spokes — 12 Specialized Directors
 
 | # | Director | Namesake | Primary model (free-tier) | Domain |
 |---|---|---|---|---|
@@ -205,6 +212,7 @@ take **HBS**-specific figures (each owns one bounded domain). See
 | 9 | Accessibility & Compliance | *(intentionally unnamed — see below)* | Claude `claude-haiku-4-5` | UDL/WCAG audit, reading level, cognitive load — the last gate before publish |
 | 10 | Content Conversion & Production — *the Copeland Desk* | Melvin T. Copeland, wrote HBS's first course-method case (1921) | Claude `claude-sonnet-5` (real decks/infographics via Canva, Gamma) | Converting research into decks/toolkits/infographics/blog posts, version control (via `outputs/`), QA & release |
 | 11 | Innovation & Continuous Improvement — *the Christensen Desk* | Clayton Christensen, HBS professor, author of *The Innovator's Dilemma* | Claude `claude-opus-5` | The workforce itself, not a task for an external audience — new AI tool/connector recommendations, refinements to other Directors, coaching Kaitlyn's own practice, adoption material for colleagues — People, Process, and Product |
+| 12 | Personal Effectiveness & Performance Coaching — *the Argyris Desk* | Chris Argyris, HBS professor (1923-2013), co-originator of double-loop learning | Claude `claude-opus-5` | How Kaitlyn performs in her actual job, not the workforce itself — prioritization, meeting prep, energy management, double-loop reflection on recurring work patterns. No calendar/email access; works only from what she directly tells it. |
 
 Accessibility & Compliance carries no namesake on purpose: UDL/WCAG are
 modern frameworks with no real Harvard figure behind them, and forcing one
@@ -220,6 +228,16 @@ The Christensen Desk (#11) is different in kind from the other ten: its
 subject is the workforce itself and how Kaitlyn works with it, not a task
 deliverable for an external audience — the meta-layer that watches usage
 patterns, scouts new tools, and proposes refinements to everything above it.
+
+The Argyris Desk (#12) is adjacent to Christensen but distinct: Christensen
+coaches how Kaitlyn works *with this AI workforce*; Argyris coaches how she
+performs *in her actual job* — prioritization, meeting prep, energy
+management — applying Argyris's own single-loop/double-loop distinction
+rather than generic productivity advice. It has no calendar or email
+connector (Kaitlyn has deliberately deferred Gmail/Calendar/Drive), so it
+works only from what she directly tells it, and it explicitly stays out of
+therapy/mental-health territory, referring real concerns to an actual human
+resource instead.
 
 Each Director lives in `agents/directors/`, subclasses `BaseDirector`
 (`agents/base_director.py`), and declares:

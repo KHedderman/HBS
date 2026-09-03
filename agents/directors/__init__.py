@@ -16,6 +16,7 @@ from agents.directors.analytics_reporting import AnalyticsReportingDirector
 from agents.directors.accessibility_compliance import AccessibilityComplianceDirector
 from agents.directors.content_production import ContentProductionDirector
 from agents.directors.innovation_advisory import InnovationAdvisoryDirector
+from agents.directors.performance_coaching import PerformanceCoachingDirector
 
 REGISTRY = {
     "market_intelligence": MarketIntelligenceDirector,
@@ -29,4 +30,5 @@ REGISTRY = {
     "accessibility_compliance": AccessibilityComplianceDirector,
     "content_production": ContentProductionDirector,
     "innovation_advisory": InnovationAdvisoryDirector,
+    "performance_coaching": PerformanceCoachingDirector,
 }
