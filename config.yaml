@@ -143,7 +143,7 @@ integrations:
     access_mode: "api_key"   # unattended path
     token_env_var: "NOTION_API_KEY"
     database_id_env_var: "NOTION_MEMORY_DATABASE_ID"
-    chat_connector_status: "installed, not yet connected — finish connecting for live in-chat use"
+    chat_connector_status: "connected"  # verified live 2026-09-03 via ListConnectors
 
   airtable:
     enabled: true
@@ -177,6 +177,28 @@ integrations:
       Granola connector, then hands the transcript to
       MemoryCurator.ingest_external_transcript() so it's curated and
       synced like any other memory entry.
+
+  canva:
+    enabled: true
+    purpose: "Real design generation — decks, infographics, toolkits, one-pagers — for the Content Conversion & Production Director"
+    access_mode: "connector_only"
+    chat_connector_status: "connected"  # verified live 2026-09-03 via ListConnectors
+    cost_note: >
+      Design generation and exports are covered by Kaitlyn's Canva plan;
+      no separate metered cost, but respect any plan-level export/brand-kit
+      limits if they come up.
+
+  google_workspace:
+    gmail: { enabled: false, chat_connector_status: "installed at org level, not enabled in this chat" }
+    google_calendar: { enabled: false, chat_connector_status: "installed at org level, not enabled in this chat" }
+    google_drive: { enabled: false, chat_connector_status: "installed at org level, not enabled in this chat" }
+    note: >
+      Deliberately deferred by Kaitlyn, not an oversight: these are
+      currently personal-account connections, and she intends to connect
+      this workforce to her actual work email/calendar/Drive once that's
+      the right account to use. No Director should assume Gmail,
+      Calendar, or Drive access, or prompt to enable them, until she
+      raises it herself.
 
   lovable:
     enabled: true
@@ -249,7 +271,8 @@ agents:
       namesake_full: "Georges Doriot"
       namesake_note: "HBS professor, founded the first modern VC firm (ARDC) to spot and fund emerging technology."
       title: "Director of AI Market & Executive Intelligence — the Doriot Desk"
-      model: "perplexity.deep_research"
+      model: "anthropic_pro.chat"  # corrected 2026-09-03: matches the real .claude/agents/doriot.md subagent (Sonnet).
+      research_connector: "perplexity.deep_research"  # optional enrichment when the Perplexity connector/key is actually available — not the base model.
       domains: [new_ai_products_and_capabilities, business_and_industry_impact, harvard_and_academic_ai_research, executive_briefings, workforce_transformation]
       note: >
         Scope is new AI products/capability releases, business and industry
@@ -261,7 +284,8 @@ agents:
       namesake_full: "Wallace B. Donham"
       namesake_note: "HBS's second dean — institutionalized the case method as HBS's core pedagogy."
       title: "Director of Pedagogical Synthesis & Instructional Design — the Donham Desk"
-      model: "google_ai_studio.research"
+      model: "anthropic_pro.chat"  # corrected 2026-09-03: matches the real .claude/agents/donham.md subagent (Sonnet).
+      research_connector: "google_ai_studio.research"  # optional NotebookLM/Gemini ingestion when that key is actually configured — not the base model.
       frameworks: [andragogy, udl, cognitive_load_theory, case_method_design]
       domains: [course_drafting, digital_module_lessons, session_facilitation_guides, student_success_tracking, granola_meeting_ingestion]
 
@@ -305,16 +329,21 @@ agents:
       title: "Director of Multimedia Production — the Land Desk"
       model: "anthropic_pro.chat"
       domains: [video_orchestration, voice, avatars, kinetic_captions, video_generation, video_editing, audio_editing, podcast_production]
-      tools: [elevenlabs, replicate, heygen]
+      tools: [elevenlabs]
+      aspirational_tools: [replicate, heygen]
       note: >
-        With the ElevenLabs connector active, generates real audio/voice via
-        mcp__ElevenLabs__* — including podcast-ready audio editing. With the
-        Replicate connector active (runs open-source video/image/audio
-        generation models), generates or edits real video. With HeyGen
-        active, generates real avatar/presenter-style video — a closer fit
-        for executive-education training content than raw model hosting.
-        All three gated per cost_bearing_action every time, not just past
-        quota.
+        Corrected 2026-09-03: only ElevenLabs is a real, connected tool —
+        verified live, and its mcp__ElevenLabs__* creative_* tools already
+        cover image/video/speech generation and editing, not just audio.
+        `replicate` and `heygen` were declared here but neither has an
+        installable connector in this org's registry (checked via
+        SearchMcpRegistry): there is no plain "Replicate" connector, and
+        the only HeyGen-named listing, "HyperFrames by HeyGen", builds
+        animated HTML slides/motion graphics — not talking-avatar
+        presenter video. Until a real avatar/presenter tool is confirmed
+        available, treat avatar/presenter video as a genuine roster gap,
+        not a connected capability — say so plainly rather than implying
+        HeyGen ran.
 
     - id: analytics_reporting
       namesake: "Henderson"
@@ -323,6 +352,20 @@ agents:
       title: "Director of Analytics & Leadership Reporting — the Henderson Desk"
       model: "anthropic_pro.reasoning"
       domains: [feedback_analysis, telemetry, iteration_suggestions, leadership_reports]
+      instrument: "metrics/learning_metrics.jsonl"  # real, in-repo — see metrics/README.md
+      note: >
+        Corrected 2026-09-03: this Director had a system_prompt and no
+        data connector, schema, or storage at all — genuinely conceptual.
+        metrics/learning_metrics.jsonl is a real, in-repo starting
+        instrument (no new connector required) so there's something to
+        actually read and report on. The 5 draft metrics it proposes are
+        Kaitlyn's placeholder, not confirmed HBS AI Institute measures —
+        public research couldn't establish what the Institute actually
+        tracks, so this needs verifying with the hiring manager, not
+        presented in the interview as settled. If a real survey/analytics
+        connector (e.g. SurveyMonkey, Smartsheet) is wanted later, that's
+        a deliberate connector-install decision for Kaitlyn to make, not
+        one to assume or install unprompted.
 
     - id: accessibility_compliance
       namesake: null
@@ -339,6 +382,7 @@ agents:
         formalized converting raw research into a usable teaching asset.
       title: "Director of Content Conversion & Production — the Copeland Desk"
       model: "anthropic_pro.chat"
+      tools: [canva]
       domains: [research_to_asset_conversion, facilitation_decks, toolkits, infographics, blog_posts, version_control, qa_release_process]
       note: >
         Added to cover the job description's "Content Conversion and
@@ -347,6 +391,18 @@ agents:
         marketing), or Land (video/audio) — this Director takes existing
         research/materials and turns them into a specific, released,
         version-controlled deliverable.
+      version_control_mechanism: >
+        Corrected 2026-09-03: "version control and QA" was a stated
+        responsibility with no real mechanism anywhere in the repo — the
+        outputs/ directory this file's logging.outputs_dir points to
+        existed but was never actually used. The real mechanism, using
+        infrastructure already connected and verified (GitHub): every
+        released asset gets committed to outputs/<date>-<slug>/ with the
+        rendered file(s) plus a short README recording the source
+        material converted from, the target format, the QA pass applied,
+        and the version number — then pushed. That commit history IS the
+        version control; no separate tool is needed. Nothing here is real
+        until at least one asset has actually gone through this path.
 
     - id: innovation_advisory
       namesake: "Christensen"

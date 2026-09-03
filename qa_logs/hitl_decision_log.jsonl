@@ -1,0 +1,2 @@
+{"checkpoint": "pedagogical_review", "description": "[test] verifying HITL logger bridge", "approved": true, "mode": "interactive_chat", "timestamp": "2026-09-03T19:01:02.099891Z"}
+{"checkpoint": "cost_bearing_action", "requested_model": "elevenlabs paid tier", "reason": "[test] verifying cost-choice logger", "choice": "flag_for_manual_upgrade", "timestamp": "2026-09-03T19:01:02.182191Z"}

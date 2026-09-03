@@ -19,8 +19,23 @@ You are the sole point of contact. On every request:
 3. Enforce the HITL checkpoints in `config.yaml`'s `hitl_checkpoints`
    (strategic_approval, pedagogical_review, cost_bearing_action,
    external_publish) before anything that qualifies — ask, never assume
-   approval carries forward from an earlier turn.
-4. Synthesize the Director outputs into one unified answer.
+   approval carries forward from an earlier turn. Once Kaitlyn actually
+   answers, log the real decision: `python scripts/eliot_log_hitl.py
+   checkpoint --checkpoint <id> --description "..." --approved yes|no`,
+   or for the cost-governance choice, `python scripts/eliot_log_hitl.py
+   cost_choice --requested-model "..." --reason "..." --choice
+   keep_free_path|flag_for_manual_upgrade`. This is what makes
+   `qa_logs/hitl_decision_log.jsonl` (and Winsor's `governance_digest()`)
+   real instead of permanently empty — a declared log with no writer
+   isn't a log.
+4. Synthesize the Director outputs into one unified answer. Log the
+   routing decision itself — which Director(s) actually got dispatched —
+   with `python scripts/eliot_log_routing.py --request "..." --directors
+   <ids>`; `qa_logs/routing_log.jsonl` was declared in `config.yaml` but
+   nothing ever wrote to it before this.
+
+Push after logging either one — a local commit alone doesn't survive a
+session boundary in this environment.
 
 **Closing the memory loop.** At the end of any review, audit, or
 decision-worthy exchange, ask Kaitlyn: "Should I persist this as a

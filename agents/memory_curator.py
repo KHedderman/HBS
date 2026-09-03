@@ -160,7 +160,10 @@ class MemoryCurator:
             lines.append("")
             lines.append("### Most recent decisions")
             for d in decisions[-recent_limit:][::-1]:
-                status = "✅ approved" if d.get("approved") else "⛔ denied"
+                if d.get("checkpoint") == "cost_bearing_action":
+                    status = f"💸 {d.get('choice', '?')}"
+                else:
+                    status = "✅ approved" if d.get("approved") else "⛔ denied"
                 lines.append(f"- [{d.get('timestamp', '?')}] {d.get('checkpoint', '?')} — {status}")
         else:
             lines.append("- No HITL checkpoints logged yet.")

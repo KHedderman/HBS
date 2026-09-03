@@ -14,14 +14,15 @@ Two execution paths, both governed by the same gate:
     like `request_tool_execution()` below does. Connected is not the same
     as pre-approved.
 
-Real video generation/editing runs through Replicate (open-source
-video/image/audio models); real avatar/presenter-style video runs through
-HeyGen — a much closer fit for executive-education training content than
-raw model hosting; real voice, podcast-ready audio editing, and
-transcription run through ElevenLabs. Captioning a video is a two-step
-chain: ElevenLabs transcribes the audio into timed text, then Replicate
-burns those captions into the video — see config.yaml's
-`directors[multimedia_production].tools`.
+Corrected 2026-09-03: only ElevenLabs is a real, connected tool (verified
+via ListConnectors/SearchMcpRegistry), and its creative_* tools already
+cover image and video generation/editing, not just audio. "Replicate" and
+"HeyGen" are aspirational — checked directly, and neither has an
+installable connector in this org's registry: there is no plain Replicate
+listing, and the only HeyGen-named one ("HyperFrames by HeyGen") builds
+animated HTML slides/motion graphics, not talking-avatar presenter video.
+See config.yaml's `directors[multimedia_production].tools` (real) vs
+`aspirational_tools` (not real) — never claim either ran.
 """
 from agents.base_director import BaseDirector, DirectorOutput
 from agents.llm_provider import PaidTierRequiredError
@@ -51,21 +52,24 @@ class MultimediaProductionDirector(BaseDirector):
         "You are the Director of Multimedia Production at the HBS AI "
         "Institute. You cover AI video generation, avatar/presenter-style "
         "video, video and audio editing, and podcast production — not just "
-        "captions and voiceover. You orchestrate Google Vids, Veo 3.1, "
-        "HeyGen, ElevenLabs, Replicate, and Descript by producing precise "
-        "production specs: a shot list/storyboard, a voiceover or presenter "
-        "script with timing marks, avatar/on-camera direction, and kinetic "
-        "caption styling notes. In the standalone script you never call "
-        "these tools directly — you produce the spec a human runs manually. "
-        "In an interactive chat session with a connector connected "
-        "(ElevenLabs for voice/podcast audio/transcription, Replicate for "
-        "real video generation/editing, HeyGen for real avatar/presenter "
-        "video), you may generate the real asset directly, but only after "
-        "the user explicitly approves that specific generation — never "
-        "assume prior approval carries forward. For captioning a video "
-        "specifically: chain the two tools — ElevenLabs transcribes the "
-        "audio into timed text, then Replicate burns those captions into "
-        "the video — rather than returning a bare transcript."
+        "captions and voiceover. Only ElevenLabs is a real, connected tool "
+        "as of 2026-09-03 (verified directly, not assumed) — its creative_* "
+        "tools cover image and video generation/editing too, not just "
+        "audio. Google Vids, Veo 3.1, HeyGen, Replicate, and Descript are "
+        "not connected, and Replicate/HeyGen specifically have no "
+        "installable connector in this org's registry at all — treat "
+        "avatar/presenter video as a genuine roster gap and say so "
+        "plainly, never implying one of these ran. For any of them, "
+        "produce precise production specs instead: a shot list/storyboard, "
+        "a voiceover or presenter script with timing marks, avatar/"
+        "on-camera direction, and kinetic caption styling notes, for a "
+        "human to run manually. With ElevenLabs connected, you may "
+        "generate the real asset directly, but only after the user "
+        "explicitly approves that specific generation — never assume "
+        "prior approval carries forward. For captioning a video "
+        "specifically: use ElevenLabs to transcribe the audio into timed "
+        "text, then its own editing tools (or a manual handoff) to apply "
+        "the captions — rather than returning a bare transcript."
     )
 
     def request_tool_execution(self, tool: str, hitl_gate) -> str:
