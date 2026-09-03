@@ -6,12 +6,19 @@ visual-media-technology pedigree.
 Two execution paths, both governed by the same gate:
   - Standalone script (this class): no direct API access to any multimedia
     tool — it always produces a spec for a human to run manually.
-  - Interactive chat mode: with the ElevenLabs connector connected, Claude
-    (embodying this Director per config.yaml) CAN call mcp__ElevenLabs__*
-    directly to produce a real asset instead of a spec — but must still
-    clear a cost_bearing_action checkpoint with the user before every
-    single generation call, exactly like `request_tool_execution()` below
-    does. Connected is not the same as pre-approved.
+  - Interactive chat mode: with the ElevenLabs or Replicate connector
+    connected, Claude (embodying this Director per config.yaml) CAN call
+    mcp__ElevenLabs__* or Replicate directly to produce a real asset
+    instead of a spec — but must still clear a cost_bearing_action
+    checkpoint with the user before every single generation call, exactly
+    like `request_tool_execution()` below does. Connected is not the same
+    as pre-approved.
+
+Real video generation/editing runs through Replicate (open-source
+video/image/audio models); real voice/transcription runs through
+ElevenLabs. Captioning a video is a two-step chain: ElevenLabs transcribes
+the audio into timed text, then Replicate burns those captions into the
+video — see config.yaml's `directors[multimedia_production].tools`.
 """
 from agents.base_director import BaseDirector, DirectorOutput
 from agents.llm_provider import PaidTierRequiredError
@@ -25,27 +32,33 @@ class MultimediaProductionDirector(BaseDirector):
 
     keywords = [
         "video", "audio", "avatar", "caption", "voiceover", "veo",
-        "elevenlabs", "descript", "google vids", "multimedia",
+        "elevenlabs", "replicate", "descript", "google vids", "multimedia",
     ]
 
     # These tools are quota-limited or paid beyond a free tier — see
-    # config.yaml's `integrations.multimedia`. Being listed in config.yaml
-    # as `enabled: true` / connector "connected" means a live call is
-    # *possible*, not pre-approved — this Director (and Claude, when
-    # embodying it interactively) still asks before every single call.
-    GATED_TOOLS = {"google_vids", "veo", "elevenlabs", "descript"}
+    # config.yaml's `integrations.multimedia` and this Director's `tools`
+    # entry. Being listed in config.yaml as `enabled: true` / connector
+    # "connected" means a live call is *possible*, not pre-approved — this
+    # Director (and Claude, when embodying it interactively) still asks
+    # before every single call.
+    GATED_TOOLS = {"google_vids", "veo", "elevenlabs", "replicate", "descript"}
 
     system_prompt = (
         "You are the Director of Multimedia Production at the HBS AI "
-        "Institute. You orchestrate Google Vids, Veo 3.1, ElevenLabs, and "
-        "Descript by producing precise production specs: a shot list / "
-        "storyboard, a voiceover script with timing marks, avatar/on-camera "
-        "direction, and kinetic caption styling notes. In the standalone "
-        "script you never call these tools directly — you produce the spec "
-        "a human runs manually. In an interactive chat session with a "
-        "connector connected (e.g. ElevenLabs), you may generate the real "
-        "asset directly, but only after the user explicitly approves that "
-        "specific generation — never assume prior approval carries forward."
+        "Institute. You orchestrate Google Vids, Veo 3.1, ElevenLabs, "
+        "Replicate, and Descript by producing precise production specs: a "
+        "shot list/storyboard, a voiceover script with timing marks, "
+        "avatar/on-camera direction, and kinetic caption styling notes. In "
+        "the standalone script you never call these tools directly — you "
+        "produce the spec a human runs manually. In an interactive chat "
+        "session with a connector connected (ElevenLabs for voice/"
+        "transcription, Replicate for real video generation/editing), you "
+        "may generate the real asset directly, but only after the user "
+        "explicitly approves that specific generation — never assume prior "
+        "approval carries forward. For captioning a video specifically: "
+        "chain the two tools — ElevenLabs transcribes the audio into timed "
+        "text, then Replicate burns those captions into the video — rather "
+        "than returning a bare transcript."
     )
 
     def request_tool_execution(self, tool: str, hitl_gate) -> str:

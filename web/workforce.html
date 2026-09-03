@@ -1,0 +1,559 @@
+<title>KH HBS Agentic Workforce</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --crimson:#A41034; --crimson-deep:#7A0C27;
+    --navy:#1F3A5F; --navy-soft:#3B5B82;
+    --ink:#1A1512; --ink-soft:#6B5E4F;
+    --paper:#F6F4EE; --paper-raised:#FFFFFF; --paper-sunk:#EDE9DF;
+    --line:#DEDACD;
+    --gold:#B8862F; --success:#2F6B4F; --brick:#B5432E;
+    --shadow:rgba(26,21,18,.10);
+    --focus:#3B5B82;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --crimson:#DD4C63; --crimson-deep:#B23350;
+      --navy:#7FA3D6; --navy-soft:#557CA8;
+      --ink:#ECE5D6; --ink-soft:#B7AB90;
+      --paper:#161310; --paper-raised:#1E1A15; --paper-sunk:#0F0D0B;
+      --line:#3A3323;
+      --gold:#E0B15A; --success:#57A17F; --brick:#DB7358;
+      --shadow:rgba(0,0,0,.5);
+      --focus:#7FA3D6;
+    }
+  }
+  :root[data-theme="dark"]{
+    --crimson:#DD4C63; --crimson-deep:#B23350;
+    --navy:#7FA3D6; --navy-soft:#557CA8;
+    --ink:#ECE5D6; --ink-soft:#B7AB90;
+    --paper:#161310; --paper-raised:#1E1A15; --paper-sunk:#0F0D0B;
+    --line:#3A3323;
+    --gold:#E0B15A; --success:#57A17F; --brick:#DB7358;
+    --shadow:rgba(0,0,0,.5);
+    --focus:#7FA3D6;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height:1.5; height:100vh; overflow:hidden;
+  }
+  button{ font-family:inherit; }
+  ::selection{ background: var(--crimson); color:#fff; }
+  :focus-visible{ outline:2px solid var(--focus); outline-offset:2px; border-radius:3px; }
+  h1,h2,h3{ font-family:"Newsreader", Georgia, serif; font-weight:600; text-wrap:balance; margin:0; }
+  .mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+  .eyebrow{ font-family:"IBM Plex Mono", monospace; font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-soft); }
+
+  .app{ display:flex; height:100vh; }
+
+  /* ---------- Sidebar ---------- */
+  .sidebar{
+    width:264px; flex:none; background:var(--paper-raised); border-right:1px solid var(--line);
+    display:flex; flex-direction:column; height:100vh;
+  }
+  .brand{ padding:1.25rem 1.1rem .9rem; border-bottom:1px solid var(--line); }
+  .brand .name{ font-size:1.15rem; line-height:1.2; }
+  .brand .name em{ font-style:italic; color:var(--crimson); }
+  .brand .byline{ font-size:.72rem; color:var(--ink-soft); margin-top:.3rem; }
+  .brand .pill{ display:inline-flex; align-items:center; gap:.35rem; margin-top:.6rem; font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; color:var(--success); font-family:"IBM Plex Mono"; }
+  .brand .pill .dot{ width:5px; height:5px; border-radius:50%; background:var(--success); }
+
+  nav.tabs{ padding:.6rem; display:flex; flex-direction:column; gap:.15rem; }
+  nav.tabs button{
+    display:flex; align-items:center; gap:.55rem; text-align:left; width:100%;
+    padding:.55rem .65rem; border:none; background:transparent; border-radius:8px;
+    color:var(--ink); font-size:.86rem; cursor:pointer;
+  }
+  nav.tabs button:hover{ background:var(--paper-sunk); }
+  nav.tabs button.active{ background:var(--crimson); color:#fff; }
+  nav.tabs button .icon{ font-size:1rem; width:1.2em; text-align:center; }
+  nav.tabs button .count{ margin-left:auto; font-family:"IBM Plex Mono"; font-size:.68rem; opacity:.75; }
+
+  .team{ margin-top:auto; border-top:1px solid var(--line); padding:.85rem 1.1rem 1rem; }
+  .team-toggle{ display:flex; justify-content:space-between; align-items:center; cursor:pointer; }
+  .team-list{ margin-top:.6rem; display:flex; flex-direction:column; gap:.4rem; max-height:220px; overflow-y:auto; }
+  .team-list[hidden]{ display:none; }
+  .team-row{ display:flex; justify-content:space-between; gap:.5rem; font-size:.72rem; }
+  .team-row .n{ font-weight:600; }
+  .team-row .r{ color:var(--ink-soft); text-align:right; }
+
+  /* ---------- Main ---------- */
+  main{ flex:1; display:flex; flex-direction:column; height:100vh; min-width:0; }
+  .topbar{
+    padding:.9rem 1.5rem; border-bottom:1px solid var(--line); display:flex;
+    justify-content:space-between; align-items:center; background:var(--paper-raised);
+  }
+  .topbar h2{ font-size:1.05rem; }
+  .topbar .sub{ font-size:.74rem; color:var(--ink-soft); margin-top:.1rem; }
+
+  .panel{ flex:1; overflow-y:auto; padding:1.5rem; }
+  .panel[hidden]{ display:none; }
+
+  /* ---------- Chat ---------- */
+  .chat-thread{ max-width:760px; margin:0 auto 1rem; display:flex; flex-direction:column; gap:1rem; }
+  .msg-user{ align-self:flex-end; max-width:80%; background:var(--navy); color:#fff; padding:.65rem .9rem; border-radius:12px 12px 2px 12px; font-size:.9rem; }
+  .msg-reply{ background:var(--paper-raised); border:1px solid var(--line); border-radius:12px; padding:.9rem 1.05rem; }
+  .director-chips{ display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:.6rem; }
+  .chip{ display:inline-flex; align-items:center; gap:.3rem; font-size:.7rem; padding:.2rem .55rem; border-radius:99px; border:1px solid var(--line); background:var(--paper); cursor:default; }
+  .chip.info{ border-color:var(--navy); color:var(--navy); }
+  .chip.gold{ border-color:var(--gold); color:var(--gold); }
+  .chip.success{ border-color:var(--success); color:var(--success); }
+  .chip.brick{ border-color:var(--brick); color:var(--brick); }
+  .reply-text{ font-size:.9rem; white-space:pre-wrap; }
+  .flags{ display:flex; flex-direction:column; gap:.45rem; margin-top:.75rem; }
+  .flag-row{ display:flex; gap:.55rem; align-items:flex-start; font-size:.79rem; background:color-mix(in srgb, var(--gold) 8%, var(--paper-raised)); border:1px solid color-mix(in srgb, var(--gold) 40%, var(--line)); border-radius:8px; padding:.5rem .65rem; }
+  .handoff{ margin-top:.75rem; font-size:.79rem; border:1px solid var(--brick); background:color-mix(in srgb, var(--brick) 8%, var(--paper-raised)); border-radius:8px; padding:.55rem .7rem; }
+  .handoff b{ color:var(--brick); }
+  .reply-meta{ display:flex; justify-content:space-between; align-items:center; margin-top:.8rem; padding-top:.7rem; border-top:1px dashed var(--line); }
+  .reply-time{ font-size:.68rem; color:var(--ink-soft); }
+  .btn-row{ display:flex; gap:.4rem; }
+  .btn{ font-weight:600; font-size:.76rem; padding:.32rem .7rem; border-radius:7px; border:1px solid transparent; cursor:pointer; }
+  .btn-success{ background:transparent; border-color:var(--success); color:var(--success); }
+  .btn-success:hover{ background:var(--success); color:#fff; }
+  .btn-brick{ background:transparent; border-color:var(--brick); color:var(--brick); }
+  .btn-brick:hover{ background:var(--brick); color:#fff; }
+  .btn-ghost{ background:transparent; border-color:var(--line); color:var(--ink-soft); }
+  .btn-ghost:hover{ background:var(--paper-sunk); }
+  .status-pill{ font-size:.66rem; text-transform:uppercase; letter-spacing:.06em; padding:.15rem .5rem; border-radius:99px; }
+
+  .empty-chat{ max-width:520px; margin:2.5rem auto; text-align:center; color:var(--ink-soft); font-size:.9rem; }
+  .empty-chat b{ color:var(--ink); }
+
+  .composer{ border-top:1px solid var(--line); background:var(--paper-raised); padding:.9rem 1.5rem 1.1rem; }
+  .composer-inner{ max-width:760px; margin:0 auto; display:flex; gap:.5rem; align-items:flex-end; }
+  .composer textarea{
+    flex:1; resize:none; min-height:44px; max-height:160px; padding:.6rem .8rem;
+    border:1px solid var(--line); border-radius:10px; background:var(--paper);
+    color:var(--ink); font-family:inherit; font-size:.9rem; line-height:1.4;
+  }
+  .mic-btn, .send-btn{ flex:none; width:42px; height:42px; border-radius:10px; border:1px solid var(--line); background:var(--paper); cursor:pointer; font-size:1.05rem; display:flex; align-items:center; justify-content:center; }
+  .mic-btn.listening{ background:var(--crimson); border-color:var(--crimson); color:#fff; animation:pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.55;} }
+  .send-btn{ background:var(--crimson); border-color:var(--crimson); color:#fff; }
+  .send-btn:disabled{ opacity:.5; cursor:progress; }
+  .composer-status{ max-width:760px; margin:.4rem auto 0; font-size:.74rem; color:var(--ink-soft); text-align:center; min-height:1.1em; }
+  .composer-status.err{ color:var(--brick); }
+  @media (prefers-reduced-motion: reduce){ .mic-btn.listening{ animation:none; } }
+
+  /* ---------- Category tabs (cards) ---------- */
+  .cards{ max-width:820px; margin:0 auto; display:flex; flex-direction:column; gap:.9rem; }
+  .card{ background:var(--paper-raised); border:1px solid var(--line); border-radius:10px; padding:1rem 1.15rem 1.1rem; }
+  .card-top{ display:flex; justify-content:space-between; gap:.75rem; flex-wrap:wrap; align-items:flex-start; }
+  .card-req{ font-family:"Newsreader"; font-style:italic; font-size:.98rem; margin:.5rem 0 .65rem; }
+  .card-body{ font-size:.87rem; white-space:pre-wrap; }
+  .card-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:.75rem; padding-top:.6rem; border-top:1px dashed var(--line); }
+  .empty-cards{ max-width:520px; margin:2.5rem auto; text-align:center; color:var(--ink-soft); font-size:.88rem; }
+
+  .about-card{ max-width:760px; margin:0 auto 1.25rem; background:var(--paper-raised); border:1px solid var(--line); border-radius:10px; padding:1rem 1.15rem; font-size:.8rem; color:var(--ink-soft); }
+  .about-card b{ color:var(--ink); }
+  .about-card ul{ margin:.5rem 0 0; padding-left:1.1rem; }
+
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px; }
+</style>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="name">KH HBS <em>Agentic Workforce</em></div>
+      <div class="byline">Directed by Kaitlyn Hedderman · HBS AI Institute</div>
+      <div class="pill mono"><span class="dot"></span> HUMAN IN THE LOOP</div>
+    </div>
+    <nav class="tabs" id="tabNav">
+      <button data-tab="chat" class="active"><span class="icon">💬</span> Chat<span class="count mono" id="count-chat"></span></button>
+      <button data-tab="market_intelligence"><span class="icon">📈</span> Market Intelligence<span class="count mono" id="count-market_intelligence"></span></button>
+      <button data-tab="pedagogical_synthesis"><span class="icon">🎓</span> Course Drafts<span class="count mono" id="count-pedagogical_synthesis"></span></button>
+      <button data-tab="product_management"><span class="icon">🛠️</span> PRDs &amp; GitHub Sync<span class="count mono" id="count-product_management"></span></button>
+      <button data-tab="project_management"><span class="icon">📋</span> Pipeline Tracker<span class="count mono" id="count-project_management"></span></button>
+      <button data-tab="analytics_reporting"><span class="icon">📊</span> Analytics<span class="count mono" id="count-analytics_reporting"></span></button>
+    </nav>
+    <div class="team">
+      <div class="team-toggle eyebrow" id="teamToggle">The Team ▾</div>
+      <div class="team-list" id="teamList" hidden></div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h2 id="topbarTitle">Chat</h2>
+        <div class="sub" id="topbarSub">Talk to Eliot — he routes it to the right Director(s)</div>
+      </div>
+      <div class="eyebrow" id="topbarMeta"></div>
+    </div>
+
+    <div class="panel" id="panel-chat">
+      <div class="about-card">
+        <b>How this works:</b> free-tier/subscription models only, never a metered key. Strategic, pedagogical, cost-bearing, and external-publish actions always pause for your review below. Connector-dependent work (Lovable, ElevenLabs, Replicate, Perplexity, GitHub, Notion, Airtable, Granola) executes for real only when connected — otherwise you get an honest handoff, never a faked result.
+      </div>
+      <div class="chat-thread" id="chatThread"></div>
+    </div>
+
+    <div class="panel" id="panel-market_intelligence" hidden><div class="cards" id="cards-market_intelligence"></div></div>
+    <div class="panel" id="panel-pedagogical_synthesis" hidden><div class="cards" id="cards-pedagogical_synthesis"></div></div>
+    <div class="panel" id="panel-product_management" hidden><div class="cards" id="cards-product_management"></div></div>
+    <div class="panel" id="panel-project_management" hidden><div class="cards" id="cards-project_management"></div></div>
+    <div class="panel" id="panel-analytics_reporting" hidden><div class="cards" id="cards-analytics_reporting"></div></div>
+
+    <div class="composer" id="composer">
+      <div class="composer-inner">
+        <textarea id="matterInput" rows="1" placeholder="Ask the team for anything — a market scan, a course draft, a PRD, a LinkedIn post…"></textarea>
+        <button class="mic-btn" id="micBtn" title="Speak your request" aria-label="Speak your request">🎙️</button>
+        <button class="send-btn" id="fileBtn" title="Send to Eliot" aria-label="Send to Eliot">➤</button>
+      </div>
+      <div class="composer-status mono" id="statusLine" aria-live="polite"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var DIRECTORS = [
+    { id:"market_intelligence", namesake:"Doriot", short:"Market & Executive Intelligence", full:"Director of AI Market & Executive Intelligence", model:"Perplexity", domain:"AI market tracking, workforce shifts, exec briefings", tab:"market_intelligence" },
+    { id:"pedagogical_synthesis", namesake:"Donham", short:"Pedagogical Synthesis", full:"Director of Pedagogical Synthesis & Instructional Design", model:"Gemini", domain:"Andragogy, UDL, cognitive load, case-method design, Granola ingestion", tab:"pedagogical_synthesis" },
+    { id:"product_management", namesake:"Aiken", short:"AI Product Management", full:"Director of AI Product Management & Development", model:"Claude · reasoning", domain:"PRDs, architecture, QA review, GitHub sync", tab:"product_management" },
+    { id:"project_management", namesake:"Taylor", short:"Project Management", full:"Director of Project Management & Cross-Functional Operations", model:"Claude · fast", domain:"Timelines, task routing, Airtable/Notion sync", tab:"project_management" },
+    { id:"ui_ux_architecture", namesake:"Gropius", short:"Interactive UI/UX Architecture", full:"Director of Interactive UI/UX Architecture", model:"Claude", domain:"Wireframes, component specs, Lovable builds", tab:null },
+    { id:"growth_content", namesake:"Levitt", short:"Growth & Omnichannel Content", full:"Director of Growth & Omnichannel Content", model:"Claude", domain:"LinkedIn, newsletter, Instagram, recycling", tab:null },
+    { id:"multimedia_production", namesake:"Land", short:"Multimedia Production", full:"Director of Multimedia Production", model:"Claude", domain:"Video generation/editing (Replicate), voice (ElevenLabs), captions", tab:null },
+    { id:"analytics_reporting", namesake:"Henderson", short:"Analytics & Leadership Reporting", full:"Director of Analytics & Leadership Reporting", model:"Claude · reasoning", domain:"Feedback, telemetry, leadership summaries", tab:"analytics_reporting" },
+    { id:"accessibility_compliance", namesake:null, short:"Accessibility & Compliance", full:"Director of Accessibility & Compliance", model:"Claude · fast", domain:"WCAG, reading level, cognitive load audit", tab:null },
+    { id:"content_production", namesake:"Copeland", short:"Content Conversion & Production", full:"Director of Content Conversion & Production", model:"Claude", domain:"Research → decks, toolkits, infographics; version control, QA & release", tab:null }
+  ];
+  var TAB_IDS = ["market_intelligence","pedagogical_synthesis","product_management","project_management","analytics_reporting"];
+  var TAB_TITLE = { chat:"Chat", market_intelligence:"Market Intelligence", pedagogical_synthesis:"Course Drafts", product_management:"PRDs & GitHub Sync", project_management:"Pipeline Tracker", analytics_reporting:"Analytics" };
+  var HITL_LABEL = { strategic_approval:"Strategic approval", pedagogical_review:"Pedagogical review", cost_bearing_action:"Cost governance", external_publish:"External publish" };
+  var STATUS_LABEL = { awaiting_review:"Awaiting review", approved:"Approved", needs_revision:"Needs revision" };
+  var STATUS_CLASS = { awaiting_review:"gold", approved:"success", needs_revision:"brick" };
+
+  var $ = function(sel, ctx){ return (ctx||document).querySelector(sel); };
+  var el = function(tag, cls, html){ var n=document.createElement(tag); if(cls) n.className=cls; if(html!=null) n.innerHTML=html; return n; };
+  var escapeHtml = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c]; }); };
+  var relTime = function(iso){
+    var d = new Date(iso), diff = (Date.now()-d.getTime())/1000;
+    if(diff<60) return "just now";
+    if(diff<3600) return Math.floor(diff/60)+"m ago";
+    if(diff<86400) return Math.floor(diff/3600)+"h ago";
+    return d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  };
+  function directorLookup(id){ return DIRECTORS.filter(function(d){return d.id===id;})[0]; }
+
+  /* ---------------- Tab switching ---------------- */
+  var activeTab = "chat";
+  function switchTab(tab){
+    activeTab = tab;
+    document.querySelectorAll("nav.tabs button").forEach(function(b){ b.classList.toggle("active", b.dataset.tab===tab); });
+    document.querySelectorAll(".panel").forEach(function(p){ p.hidden = (p.id !== "panel-"+tab); });
+    $("#topbarTitle").textContent = TAB_TITLE[tab];
+    $("#topbarSub").textContent = tab==="chat"
+      ? "Talk to Eliot — he routes it to the right Director(s)"
+      : "Saved output from this desk — approve, send back, or delete";
+    $("#composer").hidden = false;
+  }
+  $("#tabNav").addEventListener("click", function(e){
+    var btn = e.target.closest("button[data-tab]");
+    if(btn) switchTab(btn.dataset.tab);
+  });
+
+  var teamList = $("#teamList");
+  DIRECTORS.forEach(function(d){
+    var row = el("div","team-row");
+    row.innerHTML = '<span class="n">'+escapeHtml(d.namesake||d.short)+'</span><span class="r">'+escapeHtml(d.short)+'</span>';
+    row.title = d.domain;
+    teamList.appendChild(row);
+  });
+  var teamRow = el("div","team-row"); teamRow.innerHTML = '<span class="n">Eliot</span><span class="r">Chief of Staff</span>'; teamList.insertBefore(teamRow, teamList.firstChild);
+  var winsorRow = el("div","team-row"); winsorRow.innerHTML = '<span class="n">Winsor</span><span class="r">Memory Curator</span>'; teamList.insertBefore(winsorRow, teamList.children[1]);
+  $("#teamToggle").addEventListener("click", function(){
+    var hidden = teamList.hasAttribute("hidden");
+    if(hidden) teamList.removeAttribute("hidden"); else teamList.setAttribute("hidden","");
+    this.textContent = "The Team " + (hidden ? "▴" : "▾");
+  });
+
+  /* ---------------- Voice input (Web Speech API) ---------------- */
+  var micBtn = $("#micBtn");
+  var SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SpeechRec){
+    micBtn.style.display = "none";
+  } else {
+    var recognition = new SpeechRec();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    var listening = false;
+    micBtn.addEventListener("click", function(){
+      if(listening){ recognition.stop(); return; }
+      try{ recognition.start(); }catch(e){}
+    });
+    recognition.addEventListener("start", function(){ listening = true; micBtn.classList.add("listening"); });
+    recognition.addEventListener("end", function(){ listening = false; micBtn.classList.remove("listening"); });
+    recognition.addEventListener("error", function(){ listening = false; micBtn.classList.remove("listening"); });
+    recognition.addEventListener("result", function(e){
+      var text = e.results[0][0].transcript;
+      var input = $("#matterInput");
+      input.value = (input.value.trim() ? input.value.trim()+" " : "") + text;
+      input.dispatchEvent(new Event("input"));
+    });
+  }
+
+  /* ---------------- Autosize textarea ---------------- */
+  var textarea = $("#matterInput");
+  textarea.addEventListener("input", function(){
+    this.style.height = "auto";
+    this.style.height = Math.min(this.scrollHeight, 160) + "px";
+  });
+  textarea.addEventListener("keydown", function(e){
+    if((e.metaKey||e.ctrlKey) && e.key==="Enter") fileMatter();
+  });
+
+  /* ---------------- db + sample ---------------- */
+  var db=null, sample=null, casesCol=null;
+
+  function setStatus(msg, isErr){
+    var line = $("#statusLine");
+    line.textContent = msg||"";
+    line.classList.toggle("err", !!isErr);
+  }
+
+  function rosterBrief(){
+    return DIRECTORS.map(function(d){
+      return "- "+d.id+" — "+d.namesake+" — "+d.full+" ("+d.domain+")";
+    }).join("\n");
+  }
+
+  function buildPrompt(request){
+    return [
+      "You are Eliot, the Chief of Staff and Intelligent Router for KH HBS Agentic Workforce, a hub-and-spoke multi-agent system directed by Kaitlyn Hedderman.",
+      "",
+      "Roster of Directors (spokes) you may dispatch to — choose only from this list, by id:",
+      rosterBrief(),
+      "",
+      "Rules you must follow:",
+      "- Directors never talk to each other; you alone synthesize their work into one response.",
+      "- Only free-tier / subscription-included models are ever used — never mention a paid API.",
+      "- If the request touches a strategic/curriculum decision, student-facing material, spending beyond a free tier, or publishing externally (LinkedIn, Instagram, GitHub merge, Notion publish), you must FLAG it rather than resolve it — draft the work, but mark it for human approval.",
+      "- If the request needs a live connector action (a real Lovable build, real ElevenLabs/Replicate video or audio, a Granola pull, a GitHub/Notion/Airtable write), do NOT claim to have done it unless told that connector is live — otherwise flag a connector handoff, naming the tool and what to ask for in a live chat session.",
+      "",
+      "Reply with ONLY a JSON object of this exact shape:",
+      '{"directors":[{"id":"<id from roster>","reasoning":"<one sentence: why this director>"}],"synthesis":"<the drafted work product, written out in full, as the Chief of Staff\'s unified answer>","hitlFlags":[{"checkpoint":"strategic_approval|pedagogical_review|cost_bearing_action|external_publish","reason":"<one sentence>"}],"connectorHandoff":[{"tool":"Lovable|ElevenLabs|Replicate|Perplexity|GitHub|Notion|Airtable|Granola","note":"<what to ask for in chat>"}]}',
+      "Omit hitlFlags/connectorHandoff as empty arrays when none apply. Use 1-3 directors unless the request genuinely spans more.",
+      "",
+      "THE REQUEST:",
+      request
+    ].join("\n");
+  }
+
+  async function fileMatter(){
+    var input = $("#matterInput");
+    var text = input.value.trim();
+    if(!text) return;
+    if(!sample){ setStatus("Live filing isn't available in this view — bring this request to a chat session with Claude instead.", true); return; }
+
+    var btn = $("#fileBtn");
+    btn.disabled = true;
+    setStatus("Eliot is thinking…");
+
+    try{
+      var data = await sample.json(buildPrompt(text), { modelTier:"default", cache:false });
+      var directors = Array.isArray(data.directors) ? data.directors.filter(function(d){ return DIRECTORS.some(function(r){return r.id===d.id;}); }) : [];
+      var record = {
+        request: text,
+        synthesis: String(data.synthesis||"").slice(0,6000),
+        directors: directors.map(function(d){ return { id:d.id, reasoning:String(d.reasoning||"").slice(0,400) }; }),
+        hitlFlags: Array.isArray(data.hitlFlags) ? data.hitlFlags.slice(0,6).map(function(f){ return {checkpoint:String(f.checkpoint||""), reason:String(f.reason||"").slice(0,300)}; }) : [],
+        connectorHandoff: Array.isArray(data.connectorHandoff) ? data.connectorHandoff.slice(0,4).map(function(c){ return {tool:String(c.tool||""), note:String(c.note||"").slice(0,300)}; }) : [],
+        status: "awaiting_review",
+        source: "website",
+        createdAt: new Date().toISOString()
+      };
+
+      var top = await casesCol.orderBy("caseNumber","desc").limit(1).get();
+      record.caseNumber = top.empty ? 1 : (Number(top.docs[0].data().caseNumber)||0) + 1;
+
+      await casesCol.add(record);
+      input.value = "";
+      textarea.style.height = "auto";
+      setStatus("");
+    }catch(e){
+      var copy = {
+        cancelled: "Stopped.",
+        invalid_request: "Something went wrong preparing this — try shortening the request.",
+        prompt_too_large: "That's too long for one request — try trimming it.",
+        not_granted: "This page needs your permission to use Claude — try sending again to be asked.",
+        sampling_disabled: "Live filing isn't available for this account — bring this to a chat session instead.",
+        not_declared: "Live filing isn't available in this view.",
+        rate_limited: "Filing faster than Claude can keep up — try again in a moment.",
+        refused: "Claude declined to draft this — try rephrasing.",
+        empty_completion: "No draft came back — try rephrasing or shortening the request.",
+        invalid_json: "The draft came back in the wrong shape — try again.",
+        upstream_error: "A temporary hiccup — try again."
+      };
+      setStatus(copy[e.code] || "Something went wrong — try again.", true);
+    }finally{
+      btn.disabled = false;
+    }
+  }
+  $("#fileBtn").addEventListener("click", fileMatter);
+
+  /* ---------------- Rendering ---------------- */
+  function directorChips(directors, forChat){
+    return (directors||[]).map(function(dd){
+      var meta = directorLookup(dd.id);
+      var label = meta ? (meta.namesake ? (meta.namesake+" · "+meta.short) : meta.short) : dd.id;
+      return '<span class="chip info" title="'+escapeHtml(dd.reasoning||"")+'">'+escapeHtml(label)+'</span>';
+    }).join("");
+  }
+  function flagsHtml(flags){
+    if(!flags || !flags.length) return "";
+    return '<div class="flags">' + flags.map(function(f){
+      return '<div class="flag-row"><span class="chip gold">'+escapeHtml(HITL_LABEL[f.checkpoint]||f.checkpoint)+'</span><span>'+escapeHtml(f.reason)+'</span></div>';
+    }).join("") + '</div>';
+  }
+  function handoffHtml(handoffs){
+    return (handoffs||[]).map(function(c){
+      return '<div class="handoff">🔗 <b>Continue in chat</b> — needs '+escapeHtml(c.tool)+', which only runs in a live Claude Code session. '+escapeHtml(c.note)+'</div>';
+    }).join("");
+  }
+  function actionButtons(id, status){
+    return '<div class="btn-row">'+
+      '<button class="btn btn-success" data-act="approved" data-id="'+id+'">Approve</button>'+
+      '<button class="btn btn-brick" data-act="needs_revision" data-id="'+id+'">Needs revision</button>'+
+      '<button class="btn btn-ghost" data-act="delete" data-id="'+id+'">Delete</button>'+
+      '</div>';
+  }
+  function wireActions(root){
+    root.querySelectorAll("[data-act]").forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var id = btn.dataset.id, act = btn.dataset.act;
+        if(act === "delete"){
+          if(!confirm("Delete this permanently? This can't be undone.")) return;
+          await casesCol.doc(id).delete().catch(function(){});
+          return;
+        }
+        await casesCol.doc(id).update({status:act}).catch(function(){});
+      });
+    });
+  }
+
+  var EXAMPLE = {
+    caseNumber: 0,
+    request: "Draft a LinkedIn post recapping the Institute's new agentic-workflows short course, and check what competitors have shipped this month.",
+    directors: [
+      { id:"growth_content", reasoning:"Owns LinkedIn drafting and channel-native copy." },
+      { id:"market_intelligence", reasoning:"Owns competitive/market scanning for the comparison." }
+    ],
+    synthesis: "Draft LinkedIn post (Growth & Omnichannel):\n\"The AI Institute just opened enrollment for our new agentic-workflows short course...\"\n\nMarket scan (Market & Executive Intelligence):\nThree comparable programs shipped cohort updates this month — none yet cover multi-agent orchestration directly, which is your differentiator to lead with.",
+    hitlFlags: [ { checkpoint:"external_publish", reason:"This posts externally to LinkedIn and needs your sign-off before it goes out." } ],
+    connectorHandoff: [],
+    status: "awaiting_review",
+    createdAt: new Date(Date.now()-3600e3*5).toISOString(),
+    _example: true
+  };
+
+  function renderChatThread(docs){
+    var thread = $("#chatThread");
+    thread.innerHTML = "";
+    var list = docs.length ? docs.slice().reverse() : [EXAMPLE];
+    if(!docs.length){
+      var note = el("div","empty-chat","<b>No requests yet.</b><br>The exchange below shows what it looks like — type below to send your first real one.");
+      thread.appendChild(note);
+    }
+    list.forEach(function(doc){
+      var d = doc.data ? doc.data() : doc;
+      var id = doc.id || "example";
+      var userMsg = el("div","msg-user"); userMsg.textContent = d.request;
+      thread.appendChild(userMsg);
+
+      var reply = el("div","msg-reply");
+      var statusCls = STATUS_CLASS[d.status]||"gold";
+      reply.innerHTML =
+        '<div class="director-chips">'+directorChips(d.directors)+'</div>'+
+        '<div class="reply-text">'+escapeHtml(d.synthesis||"")+'</div>'+
+        flagsHtml(d.hitlFlags) + handoffHtml(d.connectorHandoff) +
+        '<div class="reply-meta">'+
+          '<span class="reply-time mono">'+(d._example?"example":relTime(d.createdAt))+'</span>'+
+          (d._example ? '<span class="status-pill chip gold">Example</span>' : '<span class="status-pill chip '+statusCls+'">'+(STATUS_LABEL[d.status]||"Awaiting review")+'</span>')+
+        '</div>'+
+        (d._example ? '' : actionButtons(id, d.status));
+      thread.appendChild(reply);
+    });
+    if(docs.length) thread.parentElement.scrollTop = thread.parentElement.scrollHeight;
+    wireActions(thread);
+  }
+
+  function renderCategoryTab(tabId, allDocs){
+    var container = $("#cards-"+tabId);
+    if(!container) return;
+    var filtered = allDocs.filter(function(doc){
+      var d = doc.data();
+      return (d.directors||[]).some(function(dd){ var m=directorLookup(dd.id); return m && m.tab===tabId; });
+    });
+    container.innerHTML = "";
+    if(!filtered.length){
+      container.appendChild(el("div","empty-cards","Nothing here yet — output from this desk will show up once you ask for something in that domain."));
+      return;
+    }
+    filtered.forEach(function(doc){
+      var d = doc.data(); var id = doc.id;
+      var statusCls = STATUS_CLASS[d.status]||"gold";
+      var card = el("div","card");
+      card.innerHTML =
+        '<div class="card-top"><span class="mono" style="font-size:.72rem;color:var(--crimson)">No. '+String(d.caseNumber||0).padStart(3,"0")+'</span>'+
+        '<span class="status-pill chip '+statusCls+'">'+(STATUS_LABEL[d.status]||"Awaiting review")+'</span></div>'+
+        '<div class="card-req">"'+escapeHtml(d.request)+'"</div>'+
+        '<div class="director-chips">'+directorChips(d.directors)+'</div>'+
+        '<div class="card-body">'+escapeHtml(d.synthesis||"")+'</div>'+
+        flagsHtml(d.hitlFlags) + handoffHtml(d.connectorHandoff) +
+        '<div class="card-foot"><span class="mono" style="font-size:.68rem;color:var(--ink-soft)">'+relTime(d.createdAt)+'</span>'+actionButtons(id, d.status)+'</div>';
+      container.appendChild(card);
+    });
+    wireActions(container);
+  }
+
+  function renderAll(snap){
+    var docs = snap.docs;
+    $("#count-chat").textContent = docs.length || "";
+    $("#topbarMeta").textContent = docs.length + (docs.length===1?" request":" requests") + " on record";
+    renderChatThread(docs);
+    TAB_IDS.forEach(function(tabId){
+      var n = docs.filter(function(doc){
+        var d = doc.data();
+        return (d.directors||[]).some(function(dd){ var m=directorLookup(dd.id); return m && m.tab===tabId; });
+      }).length;
+      $("#count-"+tabId).textContent = n || "";
+      renderCategoryTab(tabId, docs);
+    });
+  }
+
+  async function boot(){
+    try{
+      db = await window.claude.use("db");
+      sample = await window.claude.use("sample");
+    }catch(e){ db=null; sample=null; }
+
+    if(!sample){
+      $("#fileBtn").disabled = true;
+      setStatus("Live filing isn't available in this view — bring requests to a chat session with Claude.", true);
+    }
+
+    if(!db){
+      renderChatThread([]);
+      return;
+    }
+    casesCol = db.collection("requests");
+    casesCol.orderBy("createdAt","desc").limit(300).onSnapshot(function(snap){
+      renderAll(snap);
+    }, function(){ renderChatThread([]); });
+  }
+
+  switchTab("chat");
+  boot();
+})();
+</script>

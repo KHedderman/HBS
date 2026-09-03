@@ -51,12 +51,14 @@ call, not just the first one. See §4.
 ### KH HBS Agentic Workforce — a web front end
 
 **[KH HBS Agentic Workforce](https://claude.ai/code/artifact/e2a1d047-54f9-42c4-bdcc-19d3d3c26594)**
-is a published, HBS-branded dashboard: a live 3D hub-and-spoke visualization
-plus a form to send the team a request directly on the page (calling Claude
-via the page's own `sample` capability — your usage, no separate key) and a
-Work Log you work through by approving or sending back each result. Source
-in `web/docket.html`; see `web/README.md` for exactly what it can and can't
-do — it's an attended, chat-adjacent tool, not a second execution path.
+is a published, HBS-branded, chat-first dashboard: talk (type or speak) to
+Eliot in a sidebar-navigated app, see which Director(s) he routed your
+request to and why, and browse their saved output by category — Market
+Intelligence, Course Drafts, PRDs & GitHub Sync, Pipeline Tracker,
+Analytics — with Approve / Needs Revision / Delete on everything. Source
+in `web/workforce.html`; see `web/README.md` for exactly what it can and
+can't do — it's an attended, chat-adjacent tool, not a second execution
+path.
 
 ---
 
