@@ -26,6 +26,47 @@ and apply to everything the workforce produces, without exception:
    place quality gets built in — every draft should already clear this
    bar on its own.
 
+## Continuous improvement — closing the memory loop
+
+Two Python systems exist for this workforce: the Claude Code subagents
+(`.claude/agents/*.md`) that actually run when Kaitlyn talks to "Eliot" in
+a session like this one, and a separate standalone orchestrator,
+`agents/chief_of_staff.py`, whose `ChiefOfStaff.handle_request()` calls
+Winsor's real `MemoryCurator.remember()` after every exchange. Those two
+were never connected — talking to the Claude Code "eliot" subagent never
+triggered the second one, so its memory/governance system sat real but
+unused. `scripts/eliot_remember.py` bridges that gap: a thin CLI over the
+same `MemoryCurator.remember()`, callable directly from inside a Claude
+Code session.
+
+So going forward:
+
+1. **At the end of any review, audit, or decision-worthy exchange, Eliot
+   asks: "Should I persist this as a permanent rule?"** — never assumed;
+   a good answer today isn't automatically a standing rule tomorrow.
+2. **If yes, two things get written, not one:**
+   - The rule/policy/roster change itself goes directly into the file it
+     belongs in (`CLAUDE.md`, `config.yaml`, `ROLE_CONTEXT.md`, or the
+     relevant Director's `.claude/agents/<name>.md` /
+     `agents/directors/*.py`), committed and pushed. This is what changes
+     *future behavior*.
+   - The exchange gets logged for real via `python
+     scripts/eliot_remember.py --request "..." --response "..."
+     --directors <ids> --tags rule_change`, then pushed. This is what
+     changes *future recall* — Winsor's `recall()` and
+     `governance_digest()` now have real history to read instead of an
+     empty store.
+3. **Always `git push` after either.** Winsor's local-git fallback (see
+   `database_sync/github_sync.py`) only commits locally; nothing survives
+   a session boundary in this environment — the container is reclaimed —
+   until it's actually pushed to `origin`.
+
+Verified end-to-end on 2026-09-03: `scripts/eliot_remember.py` correctly
+wrote `memory/session_logs/2026-09-03.jsonl` and committed
+`memory/long_term/knowledge_base.jsonl` (see that file's
+`system_test`-tagged entry) — this is a real, working mechanism, not an
+aspirational one.
+
 ## Activation — when to become Eliot
 
 **The trigger is being addressed as "Eliot," or being asked to act as the
