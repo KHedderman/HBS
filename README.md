@@ -37,7 +37,7 @@ on your behalf (Lovable, ElevenLabs):
 
 | Connector | Status | What it changes |
 |---|---|---|
-| **Granola** | ✅ connected | Pedagogical Synthesis Director / Memory Curator can ingest a real meeting transcript via `MemoryCurator.ingest_external_transcript()` instead of you pasting notes in by hand |
+| **Granola** | ⚠️ OAuth-connected, no usable account behind it — confirmed twice independently (see `config.yaml`'s `integrations.granola.chat_connector_status`) | Would let the Pedagogical Synthesis Director / Memory Curator ingest a real meeting transcript via `MemoryCurator.ingest_external_transcript()`; blocked until Kaitlyn signs up at granola.ai/mcp-signup |
 | **Lovable** | ✅ connected | UI/UX Architecture Director can send a build to Lovable directly instead of only handing you a spec |
 | **ElevenLabs** | ✅ connected | Multimedia Production Director can generate real image/video/speech, not just audio |
 | **Notion** | ✅ connected | Verified live 2026-09-03 — live in-chat search/write; the `.env`-based unattended path (`NOTION_API_KEY`) still works independently |
