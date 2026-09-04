@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Literal
 
 from agents.config_loader import load_config
+from agents.schemas import CostChoiceRecord, HITLCheckpointRecord
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -30,8 +31,14 @@ class HITLGate:
 
     def _log(self, record: dict) -> None:
         record["timestamp"] = dt.datetime.utcnow().isoformat() + "Z"
+        # Validated against the schema that actually matches this record's
+        # shape, so a malformed checkpoint (bad choice value, missing
+        # description, ...) fails at log time instead of corrupting the
+        # file governance_digest() reads back later.
+        schema = CostChoiceRecord if record.get("checkpoint") == "cost_bearing_action" else HITLCheckpointRecord
+        validated = schema(**record).model_dump()
         with open(self.log_path, "a", encoding="utf-8") as f:
-            f.write(json.dumps(record) + "\n")
+            f.write(json.dumps(validated) + "\n")
 
     def require_approval(self, checkpoint_id: str, description: str) -> bool:
         """Blocks (interactively or via fail-safe deny) until the human

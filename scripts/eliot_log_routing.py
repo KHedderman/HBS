@@ -25,6 +25,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from agents.config_loader import load_config  # noqa: E402
+from agents.schemas import RoutingLogEntry  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 
@@ -39,11 +40,12 @@ def main() -> None:
     log_path = REPO_ROOT / cfg["logging"]["routing_log"]
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
-    record = {
-        "timestamp": dt.datetime.utcnow().isoformat() + "Z",
-        "request": args.request,
-        "directors_invoked": [d.strip() for d in args.directors.split(",") if d.strip()],
-    }
+    entry = RoutingLogEntry(
+        timestamp=dt.datetime.utcnow().isoformat() + "Z",
+        request=args.request,
+        directors_invoked=[d.strip() for d in args.directors.split(",") if d.strip()],
+    )
+    record = entry.model_dump()
     with open(log_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(record) + "\n")
 

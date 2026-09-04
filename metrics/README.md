@@ -31,9 +31,20 @@ present as settled in the interview.
 
 ## How an entry gets added
 
-Until a real survey/analytics connector is chosen and connected, add
-entries directly — hand Henderson the raw number/observation and ask it
-to append a properly-formed line, or edit this file directly. Each entry
-should be real data from an actual session or program, not a placeholder;
-an empty file is honest (no programs run yet), a file full of invented
-numbers is not.
+Until a real survey/analytics connector is chosen and connected:
+
+```bash
+python scripts/eliot_log_metric.py \
+    --program "Deciding Where to Deploy AI in Your Function" \
+    --metric session_satisfaction \
+    --value 4.6 \
+    --source "Post-session survey" \
+    --notes "n=18 VPs, first live run"
+```
+
+This validates the entry against `agents.schemas.MetricEntry` before
+appending, so a malformed line fails at write time instead of silently
+corrupting the one instrument Henderson reads from. Each entry should be
+real data from an actual session or program, not a placeholder; an empty
+file is honest (no programs run yet), a file full of invented numbers is
+not.

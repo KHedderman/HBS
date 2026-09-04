@@ -37,6 +37,7 @@ from pathlib import Path
 from typing import Any
 
 from agents.config_loader import load_config
+from agents.schemas import MemoryEntry
 from database_sync import github_sync, notion_sync
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -67,13 +68,17 @@ class MemoryCurator:
         locally regardless of sync outcomes.
         """
         timestamp = dt.datetime.utcnow().isoformat() + "Z"
-        record = {
-            "timestamp": timestamp,
-            "request": request,
-            "response": synthesized_response,
-            "directors_invoked": directors_invoked,
-            "tags": tags or [],
-        }
+        # Validated, not just constructed: a malformed entry (empty request,
+        # wrong type for directors_invoked, ...) fails here, loudly, before
+        # it ever reaches disk — not silently inside recall() weeks later.
+        entry = MemoryEntry(
+            timestamp=timestamp,
+            request=request,
+            response=synthesized_response,
+            directors_invoked=directors_invoked,
+            tags=tags or [],
+        )
+        record = entry.model_dump()
 
         self._append_session_log(record)
         self._append_long_term(record)

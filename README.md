@@ -392,7 +392,40 @@ python main.py --unattended "..."
 
 ---
 
-## 9. Extending the system
+## 9. Testing, CI & data validation
+
+```bash
+pytest -v
+```
+
+32 tests in `tests/`, covering the real logic, not scaffolding: `BaseDirector`'s
+HITL-gating on `PaidTierRequiredError`, `HITLGate`'s fail-safe deny path,
+`MemoryCurator.remember()`/`recall()` end-to-end (isolated from the real
+`memory/` files and from GitHub/Notion via monkeypatching — tests never
+write into the tracked logs), `ModelRouter`'s stub-when-no-key path, and
+every JSONL/config schema in `agents/schemas.py`. `.github/workflows/ci.yml`
+runs the suite plus a `config.yaml` schema check on every push and PR.
+
+**Every JSONL log and `config.yaml` is schema-validated at write/load
+time**, not just documented in prose:
+- `agents/schemas.py` defines a Pydantic model for each — `MemoryEntry`,
+  `HITLCheckpointRecord`, `CostChoiceRecord`, `RoutingLogEntry`,
+  `MetricEntry`, and `AppConfig` for `config.yaml` itself.
+- `MemoryCurator.remember()`, `HITLGate._log()`, `eliot_log_routing.py`,
+  and `eliot_log_metric.py` all validate before they write — a malformed
+  entry fails loudly at write time instead of silently corrupting a log
+  `recall()` or `governance_digest()` reads back later.
+- `config_loader.load_config()` validates the whole file against
+  `AppConfig` on every load (still returns a plain dict — validation is a
+  fail-fast gate, not a new access pattern every call site has to adopt).
+
+`requirements.txt` pins exact versions (not `>=` ranges) for the same
+reason a data scientist pins a `requirements.lock` — so "it works on my
+machine" means something reproducible, not a moving target.
+
+---
+
+## 10. Extending the system
 
 - **New Director:** add a subclass of `BaseDirector` in `agents/directors/`,
   register it in `agents/directors/__init__.py`'s `REGISTRY`, and add its
