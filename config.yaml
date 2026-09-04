@@ -346,7 +346,7 @@ agents:
       as one university. Exactly the hub's job: one executive view across
       everything underneath it.
     role: "Eliot — Chief of Staff & Intelligent Router (Hub)"
-    model: "anthropic_pro.chat"
+    model: "anthropic_pro.reasoning"  # corrected 2026-09-04: matches the real .claude/agents/eliot.md subagent (Opus) and CLAUDE.md's roster table — this entry was never fixed when the same drift was corrected for other roles earlier.
     embodiment: >
       In interactive mode (the default), the Chief of Staff IS the live
       Claude Code chat session talking to you — not a separate process.
